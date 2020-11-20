@@ -35,7 +35,23 @@ export class main_game extends Scene {
     }
 
     make_control_panel() {
-        // TO-DO
+        this.key_triggered_button("Go Left", ["x"], () => {
+            this.MIDDLE = false;
+            this.LEFT = true;
+            this.RIGHT = false;
+        }); 
+
+        this.key_triggered_button("Go Middle", ["c"], () => {
+            this.MIDDLE = true;
+            this.RIGHT = false;
+            this.LEFT = false;
+        }); 
+
+        this.key_triggered_button("Go Right", ["v"], () => {
+            this.MIDDLE = false;
+            this.RIGHT = true;
+            this.LEFT = false;
+        });  
     }
 
     display(context, program_state) {
@@ -45,8 +61,7 @@ export class main_game extends Scene {
             program_state.set_camera(this.initial_camera_location);
         }
 
-        program_state.projection_transform = Mat4.perspective(
-            Math.PI / 4, context.width / context.height, .1, 1000);
+        program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, .1, 1000);
 
         // variable initialization .
         let model_transform = Mat4.identity();
@@ -68,17 +83,26 @@ export class main_game extends Scene {
         this.planet2 = model_transform.times(Mat4.translation(-10, 0, -60)).times(Mat4.translation(0, 0, (t%3 - 1)*75 - 50)).times(Mat4.rotation(-angle, 0, 1, 0)).times(Mat4.scale(2, 2, 2));
         this.planet3 = model_transform.times(Mat4.translation(10, 0, -60)).times(Mat4.translation(0, 0, (t%4 - 1)*75 - 50)).times(Mat4.rotation(-angle, 0, 1, 0)).times(Mat4.scale(2, 2, 2));
 
-        // draw shapes
-        this.shapes.sphere.draw(context, program_state, this.rocket, this.materials.rocket);
-        this.shapes.planet1.draw(context, program_state, this.planet1, this.materials.planet1);
-        this.shapes.planet2.draw(context, program_state, this.planet2, this.materials.planet2);
-        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.planet3);
-
-
         // bullets??
 
         // button controls
         // TO-DO
+        if (this.RIGHT) {
+            this.rocket = this.rocket.times(Mat4.translation(1, 0, 0));
+        }
+
+        if (this.LEFT) {
+            this.rocket = this.rocket.times(Mat4.translation(-1, 0, 0));
+        }
+
+        if (this.MIDDLE) {
+            this.rocket = this.rocket
+        }
+
+        this.shapes.sphere.draw(context, program_state, this.rocket, this.materials.rocket);
+        this.shapes.planet1.draw(context, program_state, this.planet1, this.materials.planet1);
+        this.shapes.planet2.draw(context, program_state, this.planet2, this.materials.planet2);
+        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.planet3);
     }
 }
 
