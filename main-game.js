@@ -79,20 +79,20 @@ export class main_game extends Scene {
         this.rocket = model_transform.times(Mat4.translation(0, 0, 13.5)).times(Mat4.scale(2, 2, 2)).times(Mat4.scale(1.2, 1, 2));
 
         // use modulus to make planets cycle back to initial position after 2, 3, 4 seconds
-        this.planet1 = model_transform.times(Mat4.translation(5, 0, -60)).times(Mat4.translation(0, 0, (t%2)*75 - 50)).times(Mat4.rotation(angle, 0, 1, 0)).times(Mat4.scale(2, 2, 2));
-        this.planet2 = model_transform.times(Mat4.translation(-10, 0, -60)).times(Mat4.translation(0, 0, (t%3 - 1)*75 - 50)).times(Mat4.rotation(-angle, 0, 1, 0)).times(Mat4.scale(2, 2, 2));
-        this.planet3 = model_transform.times(Mat4.translation(10, 0, -60)).times(Mat4.translation(0, 0, (t%4 - 1)*75 - 50)).times(Mat4.rotation(-angle, 0, 1, 0)).times(Mat4.scale(2, 2, 2));
+        this.planet1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (t%2)*75 - 50)).times(Mat4.rotation(angle, 0, 1, 0)).times(Mat4.scale(1.5, 1.5, 1.5));
+        this.planet2 = model_transform.times(Mat4.translation(-7, 0, -60)).times(Mat4.translation(0, 0, (t%3 - 1)*75 - 50)).times(Mat4.rotation(-angle, 0, 1, 0)).times(Mat4.scale(1.5, 1.5, 1.5));
+        this.planet3 = model_transform.times(Mat4.translation(7, 0, -60)).times(Mat4.translation(0, 0, (t%4 - 1)*75 - 50)).times(Mat4.rotation(-angle, 0, 1, 0)).times(Mat4.scale(1.5, 1.5, 1.5));
 
         // bullets??
 
         // button controls
         // TO-DO
         if (this.RIGHT) {
-            this.rocket = this.rocket.times(Mat4.translation(1, 0, 0));
+            this.rocket = this.rocket.times(Mat4.translation(2, 0, 0));
         }
 
         if (this.LEFT) {
-            this.rocket = this.rocket.times(Mat4.translation(-1, 0, 0));
+            this.rocket = this.rocket.times(Mat4.translation(-2, 0, 0));
         }
 
         if (this.MIDDLE) {
