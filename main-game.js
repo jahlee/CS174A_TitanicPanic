@@ -80,8 +80,8 @@ export class main_game extends Scene {
 
         // use modulus to make planets cycle back to initial position after 2, 3, 4 seconds
         this.planet1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (t%2)*75 - 50)).times(Mat4.rotation(angle, 0, 1, 0)).times(Mat4.scale(1.5, 1.5, 1.5));
-        this.planet2 = model_transform.times(Mat4.translation(-7, 0, -60)).times(Mat4.translation(0, 0, (t%3 - 1)*75 - 50)).times(Mat4.rotation(-angle, 0, 1, 0)).times(Mat4.scale(1.5, 1.5, 1.5));
-        this.planet3 = model_transform.times(Mat4.translation(7, 0, -60)).times(Mat4.translation(0, 0, (t%4 - 1)*75 - 50)).times(Mat4.rotation(-angle, 0, 1, 0)).times(Mat4.scale(1.5, 1.5, 1.5));
+        this.planet2 = model_transform.times(Mat4.translation(-4, 0, -60)).times(Mat4.translation(0, 0, (t%3 - 1)*75 - 50)).times(Mat4.rotation(-angle, 0, 1, 0)).times(Mat4.scale(1.5, 1.5, 1.5));
+        this.planet3 = model_transform.times(Mat4.translation(4, 0, -60)).times(Mat4.translation(0, 0, (t%4 - 1)*75 - 50)).times(Mat4.rotation(-angle, 0, 1, 0)).times(Mat4.scale(1.5, 1.5, 1.5));
 
         // bullets??
 
