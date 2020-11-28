@@ -105,3 +105,5 @@ export class main_game extends Scene {
         this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.planet3);
     }
 }
+
+//test comment, ignore this
