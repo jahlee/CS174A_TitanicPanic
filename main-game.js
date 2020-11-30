@@ -1,4 +1,5 @@
 import {defs, tiny} from './examples/common.js';
+import {Shape_From_File} from "./examples/obj-file-demo.js";
 
 const {
     Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Material, Scene, Texture
@@ -22,8 +23,10 @@ export class main_game extends Scene {
             sphere: new defs.Subdivision_Sphere(4),
             planet1: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
             planet2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(4),
-            planet3: new defs.Subdivision_Sphere(2),
-            water: new defs.Grid_Patch(75, 200, row_operation1, column_operation1)
+            planet3: new defs.Subdivision_Sphere(1),
+            water: new defs.Grid_Patch(75, 200, row_operation1, column_operation1),
+            boat: new Shape_From_File("./assets/Boat.obj"),
+            wheel: new Shape_From_File("./assets/SteeringWheel.obj")
             // TODO: # rows (-z), # cols (x) (length and width), operation for each row, col
         };
 
@@ -38,8 +41,13 @@ export class main_game extends Scene {
             planet3: new Material(new defs.Phong_Shader(),
                 {ambient: 0.5, diffusivity: 1, specularity: 0.5, color: color(0, 0, 1, 1)}),
             water: new Material(new defs.Phong_Shader(),
-                {ambient: 0.5, diffusivity: 1, specularity: 0.4, color: hex_color("#0000c0")})
-        }
+                {ambient: 0.5, diffusivity: 1, specularity: 0.4, color: hex_color("#0000c0")}),
+            boat: new Material(new Gouraud_Shader(2),
+                {ambient: 0.5, diffusivity: 1, specularity: 0.4, color: hex_color("#C19A6B")}),
+            bumps: new Material(new defs.Fake_Bump_Map(1),
+                {color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("assets/stars.png")
+            })
+        };
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
         this.boat_view = Mat4.identity();
@@ -114,7 +122,16 @@ export class main_game extends Scene {
         program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 1000), new Light(sun_pos, color(0,0.243,0.803,0), 1000)];
 
         // create transformations for rocket and planets
-        this.rocket = model_transform.times(Mat4.translation(0, 0, 13.5)).times(Mat4.scale(2, 2, 2)).times(Mat4.scale(1.2, 1, 2));
+
+        // TODO: after these rotations for the boat, +x is towards screen, +y is left, and +z is up
+        this.boat = model_transform.times(Mat4.rotation(Math.PI/2.0, 0,1,0)).times(Mat4.rotation(-Math.PI/2.0, 1, 0, 0));
+        this.boat = this.boat.times(Mat4.translation(-6, 0, 1)).times(Mat4.scale(2, 2, 2)).times(Mat4.scale(1.2, 1, 2));
+
+        // TODO: after rotation for wheel, +x is right, +y is away from screen, +z is up
+        this.wheel = model_transform.times(Mat4.rotation(-Math.PI/2, 1, 0, 0));
+        this.wheel = this.wheel.times(Mat4.translation(0, -6, 4)).times(Mat4.scale(0.5, 0.5, 0.5));
+        // this.rocket = model_transform.times(Mat4.rotation(Math.PI/2, -1, 0,0));
+        // this.rocket = this.rocket.times(Mat4.translation(0, 0, 13.5)).times(Mat4.scale(2, 2, 2)).times(Mat4.scale(1.2, 1, 2));
 
         // use modulus to make planets cycle back to initial position after 2, 3, 4 seconds
         this.planet1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (t%2)*75 - 50)).times(Mat4.scale(1.5, 1.5, 1.5));
@@ -126,22 +143,24 @@ export class main_game extends Scene {
         // button controls
         // TO-DO
         if (this.RIGHT) {
-            this.rocket = this.rocket.times(Mat4.translation(1, 0, 0));
+            this.boat = this.boat.times(Mat4.translation(0, -1, 0));
         }
 
         if (this.LEFT) {
-            this.rocket = this.rocket.times(Mat4.translation(-1, 0, 0));
+            this.boat = this.boat.times(Mat4.translation(0, 1, 0));
         }
 
         if (this.MIDDLE) {
-            this.rocket = this.rocket;
+            this.boat = this.boat;
         }
 
         this.display_scene(context, program_state);
-        this.shapes.sphere.draw(context, program_state, this.rocket, this.materials.rocket);
-        this.shapes.planet1.draw(context, program_state, this.planet1, this.materials.planet1);
-        this.shapes.planet2.draw(context, program_state, this.planet2, this.materials.planet2);
-        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.planet3);
+        // this.shapes.sphere.draw(context, program_state, this.rocket, this.materials.rocket);
+        this.shapes.boat.draw(context, program_state, this.boat, this.materials.boat);
+        this.shapes.wheel.draw(context, program_state, this.wheel, this.materials.bumps);
+        this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.rocket);
+        this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.rocket);
+        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.rocket);
 
         if (this.attached) {
             if (this.attached() == this.initial_camera_location)
