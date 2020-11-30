@@ -126,11 +126,11 @@ export class main_game extends Scene {
         // button controls
         // TO-DO
         if (this.RIGHT) {
-            this.rocket = this.rocket.times(Mat4.translation(2, 0, 0));
+            this.rocket = this.rocket.times(Mat4.translation(1, 0, 0));
         }
 
         if (this.LEFT) {
-            this.rocket = this.rocket.times(Mat4.translation(-2, 0, 0));
+            this.rocket = this.rocket.times(Mat4.translation(-1, 0, 0));
         }
 
         if (this.MIDDLE) {
