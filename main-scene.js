@@ -7,6 +7,7 @@ import {Scene_To_Texture_Demo} from "./examples/scene-to-texture-demo.js"
 import {Surfaces_Demo} from "./examples/surfaces-demo.js"
 import {Text_Demo} from "./examples/text-demo.js"
 import {main_game} from "./main-game.js"
+import {tester} from "./tester.js"
 // Pull these names into this module's scope for convenience:
 const {
     Vector, Vector3, vec, vec3, vec4, color, Matrix, Mat4, Light, Shape, Material, Shader, Texture, Scene,
@@ -31,7 +32,8 @@ Object.assign(defs,
             {Scene_To_Texture_Demo},
             {Surfaces_Demo},
             {Text_Demo},
-            {main_game});
+            {main_game},
+            {tester});
 
 // ******************** End extra step
 
