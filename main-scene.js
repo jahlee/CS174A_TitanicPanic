@@ -1,13 +1,13 @@
 import {defs, tiny} from './examples/common.js';
-import {Axes_Viewer, Axes_Viewer_Test_Scene} from "./examples/axes-viewer.js"
-import {Collision_Demo, Inertia_Demo} from "./examples/collisions-demo.js"
-import {Many_Lights_Demo} from "./examples/many-lights-demo.js"
-import {Obj_File_Demo} from "./examples/obj-file-demo.js"
-import {Scene_To_Texture_Demo} from "./examples/scene-to-texture-demo.js"
-import {Surfaces_Demo} from "./examples/surfaces-demo.js"
-import {Text_Demo} from "./examples/text-demo.js"
-import {main_game} from "./main-game.js"
-import {tester} from "./tester.js"
+import {Axes_Viewer, Axes_Viewer_Test_Scene} from "./examples/axes-viewer.js";
+import {Collision_Demo, Inertia_Demo} from "./examples/collisions-demo.js";
+import {Many_Lights_Demo} from "./examples/many-lights-demo.js";
+import {Obj_File_Demo} from "./examples/obj-file-demo.js";
+import {Scene_To_Texture_Demo} from "./examples/scene-to-texture-demo.js";
+import {Surfaces_Demo} from "./examples/surfaces-demo.js";
+import {Text_Demo} from "./examples/text-demo.js";
+import {main_game} from "./main-game.js";
+
 // Pull these names into this module's scope for convenience:
 const {
     Vector, Vector3, vec, vec3, vec4, color, Matrix, Mat4, Light, Shape, Material, Shader, Texture, Scene,
@@ -32,14 +32,13 @@ Object.assign(defs,
             {Scene_To_Texture_Demo},
             {Surfaces_Demo},
             {Text_Demo},
-            {main_game},
-            {tester});
+            {main_game});
 
 // ******************** End extra step
 
 // (Can define Main_Scene's class here)
 
-const Main_Scene = tester;
+const Main_Scene = main_game;
 const Additional_Scenes = [];
 
 export {Main_Scene, Additional_Scenes, Canvas_Widget, Code_Widget, Text_Widget, defs}
