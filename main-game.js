@@ -5,6 +5,8 @@ const {
     Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Material, Scene, Texture
 } = tiny;
 
+const {Cube} = defs
+
 export class main_game extends Scene {
     constructor() {
         // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
@@ -13,26 +15,30 @@ export class main_game extends Scene {
         // TODO: bottom right corner!, kept at 0,0,0 to make calculations easier
         const initial_corner_point1 = vec3(0, 0, 0);
         // TODO: how far each point is from each other
-        const row_operation1 = (s, p) => p ? Mat4.translation(0, 0.5, 0).times(p.to4(1)).to3()
+        const row_operation = (s, p) => p ? Mat4.translation(0, 0.2, 0).times(p.to4(1)).to3()
             : initial_corner_point1;
-        const column_operation1 = (t, p) => Mat4.translation(0.5, 0, 0).times(p.to4(1)).to3();
+        const column_operation = (t, p) => Mat4.translation(0.2, 0, 0).times(p.to4(1)).to3();
 
 
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
             sphere: new defs.Subdivision_Sphere(4),
+            moon: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(4),
             planet1: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
             planet2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(4),
             planet3: new defs.Subdivision_Sphere(1),
-            water: new defs.Grid_Patch(75, 200, row_operation1, column_operation1),
-            boat: new Shape_From_File("./assets/Boat.obj"),
-            wheel: new Shape_From_File("./assets/SteeringWheel.obj")
-            // TODO: # rows (-z), # cols (x) (length and width), operation for each row, col
+            water: new defs.Grid_Patch(20, 20, row_operation, column_operation),
+            // boat: new Shape_From_File("./assets/Boat.obj"),
+            // wheel: new Shape_From_File("./assets/SteeringWheel.obj"),
+            mountain: new Shape_From_File("./assets/everest.obj"),
+            mtn: new Shape_From_File("./assets/lowpolymountains.obj"),
+            cube: new defs.Cube(),
+            boat2: new Shape_From_File("./assets/boat2.obj")
         };
 
         // *** Materials
         this.materials = {
-            rocket: new Material(new defs.Phong_Shader(),
+            ice: new Material(new defs.Phong_Shader(),
                 {ambient: 0.5, diffusivity: 1, color: hex_color("#87ceeb")}),
             planet1: new Material(new defs.Phong_Shader(),
                 {ambient: 0.5, diffusivity: 1, specularity: 0.5, color: color(1, 0, 0, 1)}),
@@ -40,16 +46,34 @@ export class main_game extends Scene {
                 {ambient: 0.5, diffusivity: 1, specularity: 0.5, color: color(0, 1, 0, 1)}),
             planet3: new Material(new defs.Phong_Shader(),
                 {ambient: 0.5, diffusivity: 1, specularity: 0.5, color: color(0, 0, 1, 1)}),
-            water: new Material(new defs.Phong_Shader(),
-                {ambient: 0.5, diffusivity: 1, specularity: 0.4, color: hex_color("#0000c0")}),
+            water: new Material(new defs.Phong_Shader(), {
+                ambient: 0.1, diffusivity: 1, specularity: 0, color: color(0.05, 0.05, 1, 0.875)}),
+            old_water: new Material(new defs.Phong_Shader(),
+                {ambient: 0, diffusivity: 1, specularity: 1, color: hex_color("#2a50B0")}),
             boat: new Material(new Gouraud_Shader(2),
                 {ambient: 0.5, diffusivity: 1, specularity: 0.4, color: hex_color("#C19A6B")}),
             bumps: new Material(new defs.Fake_Bump_Map(1),
-                {color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("assets/stars.png")
-            })
+                {color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/stars.png")}),
+            sky: new Material(new defs.Phong_Shader(),
+                {ambient: 0.9, diffusivity: 0, specularity: 0, color: hex_color("#87ceeb")}),
+            night_sky: new Material(new defs.Phong_Shader(),
+                {ambient: 0.9, diffusivity: 0, specularity: 0, color: hex_color("#000000")}),
+            sun: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 0.3, specularity: 0, color: hex_color("#ec544c")}), // same as color(0.925,0.329,0.298,1)
+            moon: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 0.3, specularity: 0, color: hex_color("#F0E68C")}),
+            mountain : new Material(new defs.Fake_Bump_Map(1), {
+                color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/texture_map.png")}),
+            boat2_fn: new Material(new defs.Fake_Bump_Map(1), {
+                color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/Normal.png")}),
+            boat2_fm: new Material(new defs.Fake_Bump_Map(1), {
+                color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/MetalSmooth.png")}),
+            boat2_fa: new Material(new defs.Fake_Bump_Map(1), {
+                color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/AlbedoTpy.png")})
         };
 
-        this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+        // this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+        this.initial_camera_location = Mat4.look_at(vec3(0, 6, 15), vec3(0, 6, 0), vec3(0, 1, 0));
         this.boat_view = Mat4.identity();
     }
 
@@ -57,8 +81,10 @@ export class main_game extends Scene {
         const random = (x) => Math.sin(1000 * x + program_state.animation_time / 1000);
 
         // Update the JavaScript-side shape with new vertices:
+        // this.shapes.water.arrays.position.forEach((p, i, a) =>
+        //     a[i] = vec3(p[0], p[1], 1.5 * random(i / a.length)));
         this.shapes.water.arrays.position.forEach((p, i, a) =>
-            a[i] = vec3(p[0], p[1], 1.5 * random(i / a.length)));
+            a[i] = vec3(p[0], p[1], 1.75*Math.sin(random(i/a.length))));
         // TODO: p[0] and p[1] are the amt of horizontal and vertical value of plane, p[2] is for z direction
         // TODO: the .5*random determines the height at that point
 
@@ -69,16 +95,24 @@ export class main_game extends Scene {
         // this.r = Mat4.rotation(-.5 * Math.sin(program_state.animation_time / 5000), 1, 1, 1);
         // this.r = Mat4.rotation(1.5, 1, 0, 0);
 
-        // Draw the sheets, flipped 180 degrees so their normals point at us. TODO: the angle of 1.55 is a trail-and-error value
-        const r = Mat4.rotation(Math.PI, 0, 1, 0).times(Mat4.rotation(1.55, 1, 0, 0));
+        // Draw the sheets, flipped 180 degrees so their normals point at us.
+        const r = Mat4.rotation(Math.PI, 0, 1, 0).times(Mat4.rotation(Math.PI/2, 1, 0, 0));
 
         // Draw the current sheet shape.
-        this.shapes.water.draw(context, program_state, Mat4.translation(50,-1.5,20).times(r), this.materials.water);
+        this.shapes.water.draw(context, program_state, Mat4.translation(50, 0, 5).times(r).times(Mat4.scale(30,30,1)), this.materials.water);
+
         // TODO: translation here specifies bottom right corner
 
         // Update the gpu-side shape with new vertices.
         // Warning:  You can't call this until you've already drawn the shape once.
         this.shapes.water.copy_onto_graphics_card(context.context, ["position", "normal"], false);
+    }
+
+    // TODO: work on this, rock boat depending on height/y-value at a specific index of the array
+    rock_the_boat() {
+        //-0.04 * Math.PI * Math.abs(Math.sin(this.t * 3 * Math.PI))
+        // this.boat = this.boat.times(Mat4.rotation(0.1 - 0.2*Math.abs(Math.sin(this.t)),0,1,0));
+        // this.wheel = this.wheel.times(Mat4.rotation(0.1 - 0.25*Math.abs(Math.sin(this.t)),-1,0,0));
     }
 
     make_control_panel() {
@@ -109,36 +143,49 @@ export class main_game extends Scene {
             program_state.set_camera(this.initial_camera_location);
         }
 
-        program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, .1, 100);
+        program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, .1, 1000);
 
         // variable initialization .
         let model_transform = Mat4.identity();
-        const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
-        const angle = t;
+        this.t = program_state.animation_time / 1000;
+        this.dt = program_state.animation_delta_time / 1000;
 
-        // set light to emit from the rocket
-        const light_position = vec4(0, 2, 5, 1);
-        const sun_pos = vec4(-25, 10, -100, 1);
-        program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 1000), new Light(sun_pos, color(0,0.243,0.803,0), 1000)];
+        // emitted light
+        const light_position = vec4(0,30,-85, 1);
+        const boat_position = vec4(0,2,-3,1);
+        const sun_pos = vec4(-25, 10, -80, 1);
 
-        // create transformations for rocket and planets
+        // night-time lights
+        // program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 15**3), new Light(boat_position, color(1,1,1,1), 10**2)];
+        // night-time (moon)
+        // this.shapes.moon.draw(context, program_state, sun_transform, this.materials.moon);
+        // night-time (black sky)
+        // this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.night_sky);
+
+        // day-time lights
+        program_state.lights = [new Light(light_position, color(0.4,0.4,0.4,1), 10**5), new Light(vec4(0,20,-30,1), color(0.75,0.75,0.75,1), 15**3)];
+        let sun_transform = model_transform.times(Mat4.translation(0,20,-95)).times(Mat4.scale(5,5,5));
+        // day-time (sun)
+        this.shapes.sphere.draw(context, program_state, sun_transform, this.materials.sun);
+        // day-time (blue sky)
+        this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.sky);
 
         // TODO: after these rotations for the boat, +x is towards screen, +y is left, and +z is up
-        this.boat = model_transform.times(Mat4.rotation(Math.PI/2.0, 0,1,0)).times(Mat4.rotation(-Math.PI/2.0, 1, 0, 0));
-        this.boat = this.boat.times(Mat4.translation(-6, 0, 1)).times(Mat4.scale(2, 2, 2)).times(Mat4.scale(1.2, 1, 2));
+        // this.boat = model_transform.times(Mat4.rotation(Math.PI/2.0, 0,1,0)).times(Mat4.rotation(-Math.PI/2.0, 1, 0, 0));
+        // this.boat = this.boat.times(Mat4.translation(-6, 0, 1)).times(Mat4.scale(2, 2, 2)).times(Mat4.scale(1.2, 1, 2));
 
         // TODO: after rotation for wheel, +x is right, +y is away from screen, +z is up
-        this.wheel = model_transform.times(Mat4.rotation(-Math.PI/2, 1, 0, 0));
-        this.wheel = this.wheel.times(Mat4.translation(0, -6, 4)).times(Mat4.scale(0.5, 0.5, 0.5));
-        // this.rocket = model_transform.times(Mat4.rotation(Math.PI/2, -1, 0,0));
-        // this.rocket = this.rocket.times(Mat4.translation(0, 0, 13.5)).times(Mat4.scale(2, 2, 2)).times(Mat4.scale(1.2, 1, 2));
+        // this.wheel = model_transform.times(Mat4.rotation(-Math.PI/2, 1, 0, 0));
+        // this.wheel = this.wheel.times(Mat4.translation(0, -3, 2)).times(Mat4.scale(0.3, 0.3, 0.3));
+
 
         // use modulus to make planets cycle back to initial position after 2, 3, 4 seconds
-        this.planet1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (t%2)*75 - 50)).times(Mat4.scale(1.5, 1.5, 1.5));
-        this.planet2 = model_transform.times(Mat4.translation(-4, 0, -60)).times(Mat4.translation(0, 0, (t%3 - 1)*75 - 50)).times(Mat4.scale(1.5, 1.5, 1.5));
-        this.planet3 = model_transform.times(Mat4.translation(4, 0, -60)).times(Mat4.translation(0, 0, (t%4 - 1)*75 - 50)).times(Mat4.scale(1.5, 1.5, 1.5));
-
-        // bullets??
+        // TODO: if we want to make it faster as time goes, then keep a counter over time and decrease the number we divide this.t by!
+        // TODO: also, to make it more realistic, the shapes should be increasing in size as they approach us, so we should figure that out! should also apply to the mountains :3
+        // TODO: also also, maybe randomize the x position to draw, store the past location in an array or something
+        this.planet1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%2)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
+        this.planet2 = model_transform.times(Mat4.translation(-12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
+        this.planet3 = model_transform.times(Mat4.translation(12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
 
         // button controls
         // TO-DO
@@ -155,12 +202,27 @@ export class main_game extends Scene {
         }
 
         this.display_scene(context, program_state);
-        // this.shapes.sphere.draw(context, program_state, this.rocket, this.materials.rocket);
-        this.shapes.boat.draw(context, program_state, this.boat, this.materials.boat);
-        this.shapes.wheel.draw(context, program_state, this.wheel, this.materials.bumps);
-        this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.rocket);
-        this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.rocket);
-        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.rocket);
+        const p = this.t + 4;
+        const q = p + 4;
+        const r = q + 4;
+        // right mountains
+        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0))), this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (p%16.0)))), this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0)))), this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0)))), this.materials.mountain);
+        // left mountains
+        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0))), this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (p%16.0)))), this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0)))), this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0)))), this.materials.mountain);
+
+        // this.shapes.boat.draw(context, program_state, this.boat, this.materials.bumps);
+        // this.shapes.wheel.draw(context, program_state, this.wheel, this.materials.bumps);
+        this.shapes.boat2.draw(context, program_state, model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0,2,2)), this.materials.boat2_fa);
+
+        this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.ice);
+        this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.ice);
+        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.ice);
 
         if (this.attached) {
             if (this.attached() == this.initial_camera_location)
