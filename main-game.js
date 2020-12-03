@@ -79,6 +79,7 @@ export class main_game extends Scene {
         this.initial_camera_location = Mat4.look_at(vec3(0, 6, 15), vec3(0, 6, 0), vec3(0, 1, 0));
         this.boat_view = Mat4.identity();
         this.pre_points = 0;
+        this.pre_position = 0;
     }
 
     display_scene(context, program_state) {
@@ -126,11 +127,11 @@ export class main_game extends Scene {
             this.RIGHT = false;
         }); 
 
-        this.key_triggered_button("Go Middle", ["c"], () => {
-            this.MIDDLE = true;
-            this.RIGHT = false;
-            this.LEFT = false;
-        }); 
+       // this.key_triggered_button("Go Middle", ["c"], () => {
+         //   this.MIDDLE = true;
+         //   this.RIGHT = false;
+         //   this.LEFT = false;
+       // }); 
 
         this.key_triggered_button("Go Right", ["v"], () => {
             this.MIDDLE = false;
@@ -194,16 +195,31 @@ export class main_game extends Scene {
 
         // button controls
         // TO-DO
+        let w = 2
+        this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0,2,2))
         if (this.RIGHT) {
-            this.boat = this.boat.times(Mat4.translation(0, -1, 0));
+            if (this.pre_position <= 5) 
+                 {
+                    this.pre_position += 0.1
+                    this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0)).times(Mat4.rotation(Math.PI/4, 0, 1, 0))
+                  }
+            else
+                {
+                    this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0))
+                }
+
         }
 
         if (this.LEFT) {
-            this.boat = this.boat.times(Mat4.translation(0, 1, 0));
-        }
-
-        if (this.MIDDLE) {
-            this.boat = this.boat;
+            if (this.pre_position >= -5) //WHEN X =-5, STOP MOVING!
+                 {
+                    this.pre_position -= 0.1
+                    this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0)).times(Mat4.rotation(-Math.PI/4, 0, 1, 0))
+                  }
+                  else
+                  {
+                     this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0))
+                  }
         }
 
         this.display_scene(context, program_state);
@@ -223,7 +239,9 @@ export class main_game extends Scene {
 
         // this.shapes.boat.draw(context, program_state, this.boat, this.materials.bumps);
         // this.shapes.wheel.draw(context, program_state, this.wheel, this.materials.bumps);
-        this.shapes.boat2.draw(context, program_state, model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0,2,2)), this.materials.boat2_fa);
+         this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
+
+       // this.shapes.boat2.draw(context, program_state, model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0,2,2)), this.materials.boat2_fa);
 
         this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.ice);
         this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.ice);
