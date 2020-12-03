@@ -1,5 +1,6 @@
 import {defs, tiny} from './examples/common.js';
 import {Shape_From_File} from "./examples/obj-file-demo.js";
+import {Text_Line} from './examples/text-demo.js';
 
 const {
     Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Material, Scene, Texture
@@ -18,7 +19,7 @@ export class main_game extends Scene {
         const row_operation = (s, p) => p ? Mat4.translation(0, 0.2, 0).times(p.to4(1)).to3()
             : initial_corner_point1;
         const column_operation = (t, p) => Mat4.translation(0.2, 0, 0).times(p.to4(1)).to3();
-
+        
 
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
@@ -33,7 +34,8 @@ export class main_game extends Scene {
             mountain: new Shape_From_File("./assets/everest.obj"),
             mtn: new Shape_From_File("./assets/lowpolymountains.obj"),
             cube: new defs.Cube(),
-            boat2: new Shape_From_File("./assets/boat2.obj")
+            boat2: new Shape_From_File("./assets/boat2.obj"),
+            text: new Text_Line(35)
         };
 
         // *** Materials
@@ -69,12 +71,15 @@ export class main_game extends Scene {
             boat2_fm: new Material(new defs.Fake_Bump_Map(1), {
                 color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/MetalSmooth.png")}),
             boat2_fa: new Material(new defs.Fake_Bump_Map(1), {
-                color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/AlbedoTpy.png")})
+                color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/AlbedoTpy.png")}),
+            text_image: new Material(new defs.Textured_Phong(1), {ambient: 1, diffusivity: 0, specularity: 0, texture: new Texture("assets/text.png")}),
         };
 
         // this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
         this.initial_camera_location = Mat4.look_at(vec3(0, 6, 15), vec3(0, 6, 0), vec3(0, 1, 0));
         this.boat_view = Mat4.identity();
+        this.pre_points = 0;
+        this.pre_position = 0;
     }
 
     display_scene(context, program_state) {
@@ -121,11 +126,11 @@ export class main_game extends Scene {
             this.RIGHT = false;
         }); 
 
-        this.key_triggered_button("Go Middle", ["c"], () => {
-            this.MIDDLE = true;
-            this.RIGHT = false;
-            this.LEFT = false;
-        }); 
+       // this.key_triggered_button("Go Middle", ["c"], () => {
+         //   this.MIDDLE = true;
+         //   this.RIGHT = false;
+         //   this.LEFT = false;
+       // }); 
 
         this.key_triggered_button("Go Right", ["v"], () => {
             this.MIDDLE = false;
@@ -136,6 +141,7 @@ export class main_game extends Scene {
     }
 
     display(context, program_state) {
+                               
         // setting camera
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
@@ -189,17 +195,31 @@ export class main_game extends Scene {
 
         // button controls
         // TO-DO
+
         this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0,2,2))
         if (this.RIGHT) {
-            this.boat2 = this.boat2.times(Mat4.translation(5, 0, 0));
+            if (this.pre_position <= 10) 
+                 {
+                    this.pre_position += 0.1
+                    this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0)).times(Mat4.rotation(Math.PI/4, 0, 1, 0))
+                  }
+            else
+                {
+                    this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0))
+                }
         }
 
         if (this.LEFT) {
-            this.boat2 = this.boat2.times(Mat4.translation(-5, 0, 0));
-        }
+            if (this.pre_position >= -10) //WHEN X =-5, STOP MOVING!
+                 {
+                    this.pre_position -= 0.1
+                    this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0)).times(Mat4.rotation(-Math.PI/4, 0, 1, 0))
+                  }
+                  else
+                  {
+                     this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0))
+                  }
 
-        if (this.MIDDLE) {
-            this.boat2 = this.boat2;
         }
 
         this.display_scene(context, program_state);
@@ -219,8 +239,11 @@ export class main_game extends Scene {
 
         // this.shapes.boat.draw(context, program_state, this.boat, this.materials.bumps);
         // this.shapes.wheel.draw(context, program_state, this.wheel, this.materials.bumps);
+
         this.rock_the_boat();
         this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
+
+       // this.shapes.boat2.draw(context, program_state, model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0,2,2)), this.materials.boat2_fa);
 
         this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.ice);
         this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.ice);
@@ -230,7 +253,13 @@ export class main_game extends Scene {
             if (this.attached() == this.initial_camera_location)
                 program_state.set_camera(this.initial_camera_location);
         }
-    }
+
+        let points = this.pre_points;
+        points++;
+        this.pre_points = points;
+        this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
+        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
+      }
 }
 
 class Gouraud_Shader extends Shader {
