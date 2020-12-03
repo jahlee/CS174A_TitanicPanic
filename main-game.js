@@ -195,10 +195,10 @@ export class main_game extends Scene {
 
         // button controls
         // TO-DO
-        let w = 2
+
         this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0,2,2))
         if (this.RIGHT) {
-            if (this.pre_position <= 5) 
+            if (this.pre_position <= 10) 
                  {
                     this.pre_position += 0.1
                     this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0)).times(Mat4.rotation(Math.PI/4, 0, 1, 0))
@@ -211,7 +211,7 @@ export class main_game extends Scene {
         }
 
         if (this.LEFT) {
-            if (this.pre_position >= -5) //WHEN X =-5, STOP MOVING!
+            if (this.pre_position >= -10) //WHEN X =-5, STOP MOVING!
                  {
                     this.pre_position -= 0.1
                     this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0)).times(Mat4.rotation(-Math.PI/4, 0, 1, 0))
