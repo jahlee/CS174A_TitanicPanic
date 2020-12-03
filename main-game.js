@@ -100,7 +100,6 @@ export class main_game extends Scene {
 
         // Draw the current sheet shape.
         this.shapes.water.draw(context, program_state, Mat4.translation(50, 0, 5).times(r).times(Mat4.scale(30,30,1)), this.materials.water);
-
         // TODO: translation here specifies bottom right corner
 
         // Update the gpu-side shape with new vertices.
@@ -110,9 +109,9 @@ export class main_game extends Scene {
 
     // TODO: work on this, rock boat depending on height/y-value at a specific index of the array
     rock_the_boat() {
-        //-0.04 * Math.PI * Math.abs(Math.sin(this.t * 3 * Math.PI))
-        // this.boat = this.boat.times(Mat4.rotation(0.1 - 0.2*Math.abs(Math.sin(this.t)),0,1,0));
-        // this.wheel = this.wheel.times(Mat4.rotation(0.1 - 0.25*Math.abs(Math.sin(this.t)),-1,0,0));
+        // -0.04 * Math.PI * Math.abs(Math.sin(this.t * 3 * Math.PI))
+        this.boat2 = this.boat2.times(Mat4.rotation(0.1 - 0.25*Math.abs(Math.sin(this.t)**3),0,0,1));
+        this.boat2 = this.boat2.times(Mat4.rotation(0.1 - 0.25*Math.abs(Math.cos(this.t*0.8)**2),1,0,0));
     }
 
     make_control_panel() {
@@ -156,19 +155,20 @@ export class main_game extends Scene {
         const sun_pos = vec4(-25, 10, -80, 1);
 
         // night-time lights
-        // program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 15**3), new Light(boat_position, color(1,1,1,1), 10**2)];
+        program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 15**3), new Light(boat_position, color(1,1,1,1), 10**2)];
+        let sun_transform = model_transform.times(Mat4.translation(0,20,-95)).times(Mat4.scale(5,5,5));
         // night-time (moon)
-        // this.shapes.moon.draw(context, program_state, sun_transform, this.materials.moon);
+        this.shapes.moon.draw(context, program_state, sun_transform, this.materials.moon);
         // night-time (black sky)
-        // this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.night_sky);
+        this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.night_sky);
 
         // day-time lights
-        program_state.lights = [new Light(light_position, color(0.4,0.4,0.4,1), 10**5), new Light(vec4(0,20,-30,1), color(0.75,0.75,0.75,1), 15**3)];
-        let sun_transform = model_transform.times(Mat4.translation(0,20,-95)).times(Mat4.scale(5,5,5));
-        // day-time (sun)
-        this.shapes.sphere.draw(context, program_state, sun_transform, this.materials.sun);
-        // day-time (blue sky)
-        this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.sky);
+        // program_state.lights = [new Light(light_position, color(0.4,0.4,0.4,1), 10**5), new Light(vec4(0,20,-30,1), color(0.75,0.75,0.75,1), 15**3)];
+        // let sun_transform = model_transform.times(Mat4.translation(0,20,-95)).times(Mat4.scale(5,5,5));
+        // // day-time (sun)
+        // this.shapes.sphere.draw(context, program_state, sun_transform, this.materials.sun);
+        // // day-time (blue sky)
+        // this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.sky);
 
         // TODO: after these rotations for the boat, +x is towards screen, +y is left, and +z is up
         // this.boat = model_transform.times(Mat4.rotation(Math.PI/2.0, 0,1,0)).times(Mat4.rotation(-Math.PI/2.0, 1, 0, 0));
@@ -189,16 +189,17 @@ export class main_game extends Scene {
 
         // button controls
         // TO-DO
+        this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0,2,2))
         if (this.RIGHT) {
-            this.boat = this.boat.times(Mat4.translation(0, -1, 0));
+            this.boat2 = this.boat2.times(Mat4.translation(5, 0, 0));
         }
 
         if (this.LEFT) {
-            this.boat = this.boat.times(Mat4.translation(0, 1, 0));
+            this.boat2 = this.boat2.times(Mat4.translation(-5, 0, 0));
         }
 
         if (this.MIDDLE) {
-            this.boat = this.boat;
+            this.boat2 = this.boat2;
         }
 
         this.display_scene(context, program_state);
@@ -218,7 +219,8 @@ export class main_game extends Scene {
 
         // this.shapes.boat.draw(context, program_state, this.boat, this.materials.bumps);
         // this.shapes.wheel.draw(context, program_state, this.wheel, this.materials.bumps);
-        this.shapes.boat2.draw(context, program_state, model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0,2,2)), this.materials.boat2_fa);
+        this.rock_the_boat();
+        this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
 
         this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.ice);
         this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.ice);
