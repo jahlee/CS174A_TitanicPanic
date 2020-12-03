@@ -35,7 +35,7 @@ export class main_game extends Scene {
             mtn: new Shape_From_File("./assets/lowpolymountains.obj"),
             cube: new defs.Cube(),
             boat2: new Shape_From_File("./assets/boat2.obj"),
-            text: new Text_Line(10)
+            text: new Text_Line(35)
         };
 
         // *** Materials
@@ -238,7 +238,7 @@ export class main_game extends Scene {
         points++;
         this.pre_points = points;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
-        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(3, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
+        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
       }
 }
 
