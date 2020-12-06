@@ -350,7 +350,7 @@ export class main_game extends Scene {
     
 
         if (this.alive == false) {
-            if (this.pre_position_y > -3) {
+            if (this.pre_position_y > -5) {
                 this.pre_position_y -= 0.05;
             }
         }
