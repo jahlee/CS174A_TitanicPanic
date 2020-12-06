@@ -127,6 +127,7 @@ export class main_game extends Scene {
         //var values = [-5,-4,-3,-2,-1,0,1,2,3,4,5];
         //this.values = shuffle[values]
         //this.x = (getRandomInt(-20,20));
+        this.a =3;
     }
 
     display_scene(context, program_state) {
@@ -295,22 +296,36 @@ export class main_game extends Scene {
 //         this.planet3 = model_transform.times(Mat4.translation(12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
 
 
-        if (((this.t/3%2)*75-50) >= 80) 
+       //NOTE: THIS.A MUST STAY ABOVE 0
+        let time1 = (this.t/this.a%2)*75
+        let time2= (this.t/this.a%3 - 1)*75
+        let time3= (this.t/this.a%4 - 1)*75
+        let time4 = (this.t/this.a%5 - 1)*75
+
+        if (time1 >= 130) 
         {
-             this.x = (getRandomInt(-20,20));
-        }
-        if (((this.t/3%3 - 1)*75 - 50) >= 80)
-        {
-            this.x2 = (getRandomInt(-20,20));
-        }
-        if (((this.t/3%4 - 1)*75 - 50) >= 80)
-        {
-            this.x3 = (getRandomInt(-20,20));
+             this.x = (getRandomInt(-10,10));
+             //this.x = values[Math.floor(Math.random() * values.length)]
         }
 
-        this.planet1 = model_transform.times(Mat4.translation(this.x, 0, -60).times(Mat4.translation(0, 0, (this.t/3%2)*75 - 50)).times(Mat4.scale(3, 6, 1.5)));
-        this.planet2 = model_transform.times(Mat4.translation(this.x2, 0, -60).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5)));
-        this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5)));
+        if (time2 >= 130)
+        {
+            this.x2 = (getRandomInt(-10,10));
+ 
+        }
+        if (time3 >= 130)
+        {
+            this.x3 = (getRandomInt(-10,10));
+        }
+        if (time3 >= 130)
+        {
+            this.x4 = (getRandomInt(-10,10));
+        }
+        
+
+        this.planet1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(3, 6, 1.5));
+        this.planet2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(3, 6, 1.5));
+        this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(3, 6, 1.5));
        
         
         // button controls
@@ -376,6 +391,10 @@ export class main_game extends Scene {
         this.pre_points = points;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
+        if (points%500 == 0)
+        {
+             this.a = this.a/1.1;
+        }
       }
 }
 
