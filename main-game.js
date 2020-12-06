@@ -122,8 +122,9 @@ export class main_game extends Scene {
         this.boat_view = Mat4.identity();
         this.pre_points = 0;
         this.MIDDLE = true;
-        this.pre_position = 0;
+        this.pre_position = 0; // boat's x position
         this.pre_position_z = 0;
+        this.alive = true;
         //var values = [-5,-4,-3,-2,-1,0,1,2,3,4,5];
         //this.values = shuffle[values]
         //this.x = (getRandomInt(-20,20));
@@ -162,56 +163,58 @@ export class main_game extends Scene {
         // +x is LEFT, + y is INTO THE SCREEN, +z is DOWN
         // BIG MIDDLE: when we scale z by 5, a translation of 0.75 is 3.75, so 1.25 is overlapped with the boat, 3.75 is out behind
         // this.shapes.back.draw(context, program_state, Mat4.scale(1,0.8,5).times(Mat4.translation(0.4,0.65/0.8,0.75)).times(r), this.materials.back_water2);
-        let middle = r.times(Mat4.translation(-0.5,0,0));
-        let left = r;
-        let right = r.times(Mat4.translation(-0.5,0,0));
+        if (this.alive) { // ONLY LET THE PLAYER MOVE IF THEY ARE STILL ALIVE
+            let middle = r.times(Mat4.translation(-0.5,0,0));
+            let left = r;
+            let right = r.times(Mat4.translation(-0.5,0,0));
 
-        if (this.LEFT) {
-            middle = middle.times(Mat4.translation(-this.pre_position, 0, 0))
-                .times(Mat4.rotation(-Math.PI/5,0,0,1))
-                .times(Mat4.scale(1,7,1))
-                .times(Mat4.translation(-1.5,-5/7,0));
-            left = left.times(Mat4.translation(-this.pre_position, 0, 0))
-                .times(Mat4.rotation(-Math.PI/5,0,0,1))
-                .times(Mat4.rotation(Math.PI/15,0,0,1))
-                .times(Mat4.scale(0.5,7,1))
-                .times(Mat4.translation(0,-5/7,0));
-            right = right.times(Mat4.translation(-this.pre_position, 0, 0))
-                .times(Mat4.rotation(-Math.PI/5,0,0,1))
-                .times(Mat4.rotation(-Math.PI/15,0,0,1))
-                .times(Mat4.scale(0.5,7,1))
-                .times(Mat4.translation(-5,-5/7,0));
-        }
-        else if (this.RIGHT) {
-            middle = middle.times(Mat4.translation(-this.pre_position, 0, 0))
-                .times(Mat4.rotation(Math.PI/5,0,0,1))
-                .times(Mat4.scale(1,7,1))
-                .times(Mat4.translation(1.5,-5/7,0));
-            left = left.times(Mat4.translation(-1*this.pre_position, 0, 0))
-                .times(Mat4.rotation(Math.PI/5,0,0,1))
-                .times(Mat4.rotation(Math.PI/15,0,0,1))
-                .times(Mat4.scale(0.5,7,1))
-                .times(Mat4.translation(5,-5/7,0));
-            right = right.times(Mat4.translation(-this.pre_position, 0, 0))
-                .times(Mat4.rotation(Math.PI/5,0,0,1))
-                .times(Mat4.rotation(-Math.PI/15,0,0,1))
-                .times(Mat4.scale(0.5,7,1))
-                .times(Mat4.translation(0,-5/7,0));
-        }
-        else {
-            middle = middle.times(Mat4.scale(1,7,1))
-                .times(Mat4.translation(-1*this.pre_position, -5/7,0));
-            left = left.times(Mat4.rotation(Math.PI/15, 0, 0, 1))
-                .times(Mat4.scale(0.5,7,1))
-                .times(Mat4.translation(3.5 - 2*this.pre_position, -2/7 + 2*Math.min(0, this.pre_position/10)/7,0));
-            right = right.times(Mat4.rotation(-Math.PI/15, 0, 0, 1))
-                .times(Mat4.scale(0.5,7,1))
-                .times(Mat4.translation(-3.5 - 2*this.pre_position, -2/7 - 2*Math.max(0, this.pre_position/10)/7,0));
-        }
+            if (this.LEFT) {
+                middle = middle.times(Mat4.translation(-this.pre_position, 0, 0))
+                    .times(Mat4.rotation(-Math.PI/5,0,0,1))
+                    .times(Mat4.scale(1,7,1))
+                    .times(Mat4.translation(-1.5,-5/7,0));
+                left = left.times(Mat4.translation(-this.pre_position, 0, 0))
+                    .times(Mat4.rotation(-Math.PI/5,0,0,1))
+                    .times(Mat4.rotation(Math.PI/15,0,0,1))
+                    .times(Mat4.scale(0.5,7,1))
+                    .times(Mat4.translation(0,-5/7,0));
+                right = right.times(Mat4.translation(-this.pre_position, 0, 0))
+                    .times(Mat4.rotation(-Math.PI/5,0,0,1))
+                    .times(Mat4.rotation(-Math.PI/15,0,0,1))
+                    .times(Mat4.scale(0.5,7,1))
+                    .times(Mat4.translation(-5,-5/7,0));
+            }
+            else if (this.RIGHT) {
+                middle = middle.times(Mat4.translation(-this.pre_position, 0, 0))
+                    .times(Mat4.rotation(Math.PI/5,0,0,1))
+                    .times(Mat4.scale(1,7,1))
+                    .times(Mat4.translation(1.5,-5/7,0));
+                left = left.times(Mat4.translation(-1*this.pre_position, 0, 0))
+                    .times(Mat4.rotation(Math.PI/5,0,0,1))
+                    .times(Mat4.rotation(Math.PI/15,0,0,1))
+                    .times(Mat4.scale(0.5,7,1))
+                    .times(Mat4.translation(5,-5/7,0));
+                right = right.times(Mat4.translation(-this.pre_position, 0, 0))
+                    .times(Mat4.rotation(Math.PI/5,0,0,1))
+                    .times(Mat4.rotation(-Math.PI/15,0,0,1))
+                    .times(Mat4.scale(0.5,7,1))
+                    .times(Mat4.translation(0,-5/7,0));
+            }
+            else {
+                middle = middle.times(Mat4.scale(1,7,1))
+                    .times(Mat4.translation(-1*this.pre_position, -5/7,0));
+                left = left.times(Mat4.rotation(Math.PI/15, 0, 0, 1))
+                    .times(Mat4.scale(0.5,7,1))
+                    .times(Mat4.translation(3.5 - 2*this.pre_position, -2/7 + 2*Math.min(0, this.pre_position/10)/7,0));
+                right = right.times(Mat4.rotation(-Math.PI/15, 0, 0, 1))
+                    .times(Mat4.scale(0.5,7,1))
+                    .times(Mat4.translation(-3.5 - 2*this.pre_position, -2/7 - 2*Math.max(0, this.pre_position/10)/7,0));
+            }
 
-        this.shapes.back.draw(context, program_state, middle, this.materials.back_water2);
-        this.shapes.back.draw(context, program_state, left, this.materials.back_water2);
-        this.shapes.back.draw(context, program_state, right, this.materials.back_water2);
+            this.shapes.back.draw(context, program_state, middle, this.materials.back_water2);
+            this.shapes.back.draw(context, program_state, left, this.materials.back_water2);
+            this.shapes.back.draw(context, program_state, right, this.materials.back_water2);
+        }
 
         // LEFT SIDE: y is now into the screen, z is down,
         // this.shapes.back.draw(context, program_state, r.times(Mat4.rotation(Math.PI/8, 0, 0, 1)).times(Mat4.scale(0.25,5,0.8)).times(Mat4.translation(0,-0.75,-0.65/0.8)), this.materials.back_water2);
@@ -323,37 +326,42 @@ export class main_game extends Scene {
         }
         
 
-        this.planet1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(3, 6, 1.5));
-        this.planet2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(3, 6, 1.5));
-        this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(3, 6, 1.5));
-       
+        if (this.alive) {
+            this.planet1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(3, 6, 1.5));
+            this.planet2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(3, 6, 1.5));
+            this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(3, 6, 1.5));
+        }
         
-        // button controls
-        // TO-DO
+        let planet1z = (this.t/3%2)*75 - 50;
+        let planet2z = (this.t/3%3 - 1)*75 - 50;
+        let planet3z = (this.t/3%4 -1)*75 - 50;
+
 
         this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2));
         this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0));
 
-        if (this.RIGHT) {
-            if (this.pre_position <= 10)
-            {
-                this.pre_position += 0.1;
-                this.boat2 = this.boat2.times(Mat4.rotation(Math.PI/5, 0, 1, 0))
+        if (this.alive) { // ONLY LET USER DO KEY CONTROLS IF THE PLAYER IS STILL ALIVE
+            if (this.RIGHT) {
+                if (this.pre_position <= 10)
+                {
+                    this.pre_position += 0.1;
+                    this.boat2 = this.boat2.times(Mat4.rotation(Math.PI/5, 0, 1, 0))
+                }
+                else
+                {
+                    this.RIGHT = false;
+                }
             }
-            else
-            {
-                this.RIGHT = false;
-            }
-        }
-        else if (this.LEFT) {
-            if (this.pre_position >= -10) //WHEN X = -10, STOP MOVING!
-            {
-                this.pre_position -= 0.1;
-                this.boat2 = this.boat2.times(Mat4.rotation(-Math.PI/5, 0, 1, 0));
-             }
-            else
-            {
-                this.LEFT = false;
+            else if (this.LEFT) {
+                if (this.pre_position >= -10) //WHEN X = -10, STOP MOVING!
+                {
+                    this.pre_position -= 0.1;
+                    this.boat2 = this.boat2.times(Mat4.rotation(-Math.PI/5, 0, 1, 0));
+                 }
+                else
+                {
+                    this.LEFT = false;
+                }
             }
         }
 
@@ -377,17 +385,43 @@ export class main_game extends Scene {
         this.rock_the_boat();
         this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
 
+        let points = this.pre_points;
+
         this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.planet1);
         this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.planet2);
         this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.planet3);
 
-        if (this.attached) {
-            if (this.attached() == this.initial_camera_location)
-                program_state.set_camera(this.initial_camera_location);
+        if (this.alive) { // Only increment points while player is alive
+            points++;
+        } else { // Game over screen upon losing
+            this.shapes.text.set_string("GAME", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*10)/10)), this.materials.text_image);
+            this.shapes.text.set_string("OVER", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*10)/10)), this.materials.text_image);
         }
 
-        let points = this.pre_points;
-        points++;
+               // collision detection
+
+       if (this.alive) {
+            if (Math.abs(planet1z - 55) < 3) {
+                if (Math.abs(this.pre_position - this.x) < 10) {
+                    this.alive = false;
+                }
+            } else if (Math.abs(planet2z - 55) < 3) {
+                if (Math.abs(this.pre_position - this.x2) < 10) {
+                    this.alive = false;
+                }
+            } else if (Math.abs(planet3z - 55) < 3) {
+                if (Math.abs(this.pre_position - this.x3) < 10) {
+                    this.alive = false;
+                }
+            }
+       }
+
+//         if (this.attached) {
+//             if (this.attached() == this.initial_camera_location)
+//                 program_state.set_camera(this.initial_camera_location);
+//         }
         this.pre_points = points;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
