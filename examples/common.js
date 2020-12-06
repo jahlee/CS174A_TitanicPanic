@@ -350,7 +350,7 @@ const Cone_Tip = defs.Cone_Tip =
 const Torus = defs.Torus =
     class Torus extends Shape {
         // Build a donut shape.  An example of a surface of revolution.
-        constructor(rows, columns, texture_range=[[0, 1], [0, 1]]) {
+        constructor(rows, columns, texture_range) {
             super("position", "normal", "texture_coord");
             const circle_points = Array(rows).fill(vec3(1 / 3, 0, 0))
                 .map((p, i, a) => Mat4.translation(-2 / 3, 0, 0)
@@ -570,7 +570,7 @@ const Funny_Shader = defs.Funny_Shader =
 
 const Phong_Shader = defs.Phong_Shader =
     class Phong_Shader extends Shader {
-        // **Phong_Shader** is a subclass of Shader, which stores and manages a GPU program.
+        // **Phong_Shader** is a subclass of Shader, which stores and maanges a GPU program.
         // Graphic cards prior to year 2000 had shaders like this one hard-coded into them
         // instead of customizable shaders.  "Phong-Blinn" Shading here is a process of
         // determining brightness of pixels via vector math.  It compares the normal vector
@@ -753,7 +753,8 @@ const Textured_Phong = defs.Textured_Phong =
             return this.shared_glsl_code() + `
                 varying vec2 f_tex_coord;
                 uniform sampler2D texture;
-        
+                uniform float animation_time;
+                
                 void main(){
                     // Sample the texture image in the correct place:
                     vec4 tex_color = texture2D( texture, f_tex_coord );
@@ -768,7 +769,8 @@ const Textured_Phong = defs.Textured_Phong =
         update_GPU(context, gpu_addresses, gpu_state, model_transform, material) {
             // update_GPU(): Add a little more to the base class's version of this method.
             super.update_GPU(context, gpu_addresses, gpu_state, model_transform, material);
-
+            // Updated for assignment 4
+            context.uniform1f(gpu_addresses.animation_time, gpu_state.animation_time / 1000);
             if (material.texture && material.texture.ready) {
                 // Select texture unit 0 for the fragment shader Sampler2D uniform called "texture":
                 context.uniform1i(gpu_addresses.texture, 0);
