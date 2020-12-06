@@ -129,6 +129,8 @@ export class main_game extends Scene {
         //this.values = shuffle[values]
         //this.x = (getRandomInt(-20,20));
         this.a =3;
+
+        this.rmountain1 = this.rmountain2 = this.rmountain3 = this.rmountain4 = this.lmountain1 = this.lmountain2 = this.lmountain3 = this.lmountain4 = Mat4.identity();
     }
 
     display_scene(context, program_state) {
@@ -371,16 +373,29 @@ export class main_game extends Scene {
         const p = this.t + 4;
         const q = p + 4;
         const r = q + 4;
+        
+        if (this.alive) {
+            this.rmountain1 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0)));
+            this.rmountain2 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (p%16.0))));
+            this.rmountain3 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0))));
+            this.rmountain4 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0))));
+
+            this.lmountain1 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0)));
+            this.lmountain2 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (p%16.0))));
+            this.lmountain3 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0))));
+            this.lmountain4 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0))));
+        }
+
         // right mountains
-        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0))), this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (p%16.0)))), this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0)))), this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0)))), this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, this.rmountain1, this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, this.rmountain2, this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, this.rmountain3, this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, this.rmountain4, this.materials.mountain);
         // left mountains
-        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0))), this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (p%16.0)))), this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0)))), this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0)))), this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, this.lmountain1, this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, this.lmountain2, this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, this.lmountain3, this.materials.mountain);
+        this.shapes.mountain.draw(context, program_state, this.lmountain4, this.materials.mountain);
 
         this.rock_the_boat();
         this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
@@ -406,18 +421,8 @@ export class main_game extends Scene {
                // collision detection
 
        if (this.alive) {
-            if (Math.abs(planet1z - 55) < 3) {
-                if (Math.abs(this.pre_position - this.x) < 10) {
-                    this.alive = false;
-                }
-            } else if (Math.abs(planet2z - 55) < 3) {
-                if (Math.abs(this.pre_position - this.x2) < 10) {
-                    this.alive = false;
-                }
-            } else if (Math.abs(planet3z - 55) < 3) {
-                if (Math.abs(this.pre_position - this.x3) < 10) {
-                    this.alive = false;
-                }
+            if ((Math.abs(planet1z - 57) < 1 && Math.abs(this.pre_position - this.x) < 2) || (Math.abs(planet2z - 57) < 1 && Math.abs(this.pre_position - this.x2) < 2) || (Math.abs(planet3z - 57) < 1 && Math.abs(this.pre_position - this.x3) < 2)) {  
+                this.alive = false;
             }
        }
 
