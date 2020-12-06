@@ -338,7 +338,7 @@ export class main_game extends Scene {
        // collision detection
 
        if (this.alive) {
-            if ((Math.abs(planet1z - 57) < 1 && Math.abs(this.pre_position - this.x) < 2) || (Math.abs(planet2z - 57) < 1 && Math.abs(this.pre_position - this.x2) < 2) || (Math.abs(planet3z - 57) < 1 && Math.abs(this.pre_position - this.x3) < 2)) {  
+            if ((Math.abs(planet1z - 57) < 3 && Math.abs(this.pre_position - this.x) < 3) || (Math.abs(planet2z - 57) < 3 && Math.abs(this.pre_position - this.x2) < 3) || (Math.abs(planet3z - 57) < 3 && Math.abs(this.pre_position - this.x3) < 3)) {  
                 this.alive = false;
             }
 
@@ -418,9 +418,9 @@ export class main_game extends Scene {
             points++;
         } else { // Game over screen upon losing
             this.shapes.text.set_string("GAME", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*10)/10)), this.materials.text_image);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
             this.shapes.text.set_string("OVER", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*10)/10)), this.materials.text_image);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
         }
 
        this.pre_points = points;
