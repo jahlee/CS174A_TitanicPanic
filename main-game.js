@@ -242,17 +242,12 @@ export class main_game extends Scene {
             this.RIGHT = false;
         }); 
 
-       // this.key_triggered_button("Go Middle", ["c"], () => {
-         //   this.MIDDLE = true;
-         //   this.RIGHT = false;
-         //   this.LEFT = false;
-       // }); 
-
         this.key_triggered_button("Go Right", ["v"], () => {
             this.RIGHT = true;
             this.LEFT = false;
         });
-        this.key_triggered_button("Boat view", ["b"], () => this.attached = () => this.initial_camera_location);
+        
+        //this.key_triggered_button("Boat view", ["b"], () => this.attached = () => this.initial_camera_location);
     }
 
     // MAIN DISPLAY
@@ -334,36 +329,46 @@ export class main_game extends Scene {
             this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(3, 6, 1.5));
         }
         
-        let planet1z = (this.t/3%2)*75 - 50;
-        let planet2z = (this.t/3%3 - 1)*75 - 50;
-        let planet3z = (this.t/3%4 -1)*75 - 50;
+        let planet1z = time1 - 50;
+        let planet2z = time2 - 50;
+        let planet3z = time3 - 50;
+
+       // collision detection
+
+       if (this.alive) {
+            if ((Math.abs(planet1z - 57) < 1 && Math.abs(this.pre_position - this.x) < 2) || (Math.abs(planet2z - 57) < 1 && Math.abs(this.pre_position - this.x2) < 2) || (Math.abs(planet3z - 57) < 1 && Math.abs(this.pre_position - this.x3) < 2)) {  
+                this.alive = false;
+            }
+
+       }
 
 
         this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2));
         this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0));
 
+
         if (this.alive) { // ONLY LET USER DO KEY CONTROLS IF THE PLAYER IS STILL ALIVE
+
+            this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2));
+            this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0));
+
             if (this.RIGHT) {
-                if (this.pre_position <= 10)
+                 if (this.pre_position <= 10) //WHEN X = -10, STOP MOVING!
                 {
                     this.pre_position += 0.1;
-                    this.boat2 = this.boat2.times(Mat4.rotation(Math.PI/5, 0, 1, 0))
-                }
-                else
-                {
-                    this.RIGHT = false;
-                }
+                    this.boat2 = this.boat2.times(Mat4.rotation(Math.PI/5, 0, 1, 0));
+                 } else {
+                     this.RIGHT = false;
+                 }
             }
             else if (this.LEFT) {
                 if (this.pre_position >= -10) //WHEN X = -10, STOP MOVING!
                 {
                     this.pre_position -= 0.1;
                     this.boat2 = this.boat2.times(Mat4.rotation(-Math.PI/5, 0, 1, 0));
+                 } else {
+                     this.LEFT = false;
                  }
-                else
-                {
-                    this.LEFT = false;
-                }
             }
         }
 
@@ -416,20 +421,13 @@ export class main_game extends Scene {
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*10)/10)), this.materials.text_image);
         }
 
-        this.pre_points = points;
-
-               // collision detection
-
-       if (this.alive) {
-            if ((Math.abs(planet1z - 57) < 1 && Math.abs(this.pre_position - this.x) < 2) || (Math.abs(planet2z - 57) < 1 && Math.abs(this.pre_position - this.x2) < 2) || (Math.abs(planet3z - 57) < 1 && Math.abs(this.pre_position - this.x3) < 2)) {  
-                this.alive = false;
-            }
-       }
+       this.pre_points = points;
 
 //         if (this.attached) {
 //             if (this.attached() == this.initial_camera_location)
 //                 program_state.set_camera(this.initial_camera_location);
 //         }
+
         this.pre_points = points;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
