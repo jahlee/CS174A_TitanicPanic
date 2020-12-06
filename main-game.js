@@ -129,8 +129,10 @@ export class main_game extends Scene {
         //this.values = shuffle[values]
         //this.x = (getRandomInt(-20,20));
         this.a =3;
+        this.size_count = 0;
 
         this.rmountain1 = this.rmountain2 = this.rmountain3 = this.rmountain4 = this.lmountain1 = this.lmountain2 = this.lmountain3 = this.lmountain4 = Mat4.identity();
+
     }
 
     display_scene(context, program_state) {
@@ -435,6 +437,26 @@ export class main_game extends Scene {
         {
              this.a = this.a/1.1;
         }
+
+
+        // beginning game dialogue
+        if (this.t < 3) {
+            this.shapes.text.set_string("OH NO! OBSTACLES SPOTTED AHEAD!", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
+        } else if (this.t < 7) {
+            this.shapes.text.set_string("STEER THIS BOAT TO SAFETY!", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
+        } else {
+            if (this.size_count < 0.2) {
+                this.size_count += 0.01
+            }
+            this.shapes.text.set_string("USE THE 'X' KEY TO MOVE LEFT", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(2, 11.5, 0)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image);
+
+            this.shapes.text.set_string("USE THE 'V' KEY TO MOVE RIGHT", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(2, 11, 0)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image); 
+        }      
+
       }
 }
 
