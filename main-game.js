@@ -377,9 +377,9 @@ export class main_game extends Scene {
         this.rock_the_boat();
         this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
 
-        this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.planet1);
-        this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.planet2);
-        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.planet3);
+        this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.ice);
+        this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.ice);
+        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.ice);
 
         if (this.attached) {
             if (this.attached() == this.initial_camera_location)
