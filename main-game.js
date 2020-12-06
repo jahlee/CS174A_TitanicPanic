@@ -8,6 +8,23 @@ const {
 
 const {Cube, Textured_Phong} = defs
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
+
+function shuffle(array) {
+    var tmp, current, top = array.length;
+    if(top) while(--top) {
+        current = Math.floor(Math.random() * (top +1));
+        tmp = array[current];
+        array[current] = array[top];
+        array[top] = tmp;
+    }
+    return array;
+}
+
 export class main_game extends Scene {
     constructor() {
         // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
@@ -39,11 +56,11 @@ export class main_game extends Scene {
             cube: new Cube(),
             boat2: new Shape_From_File("./assets/boat2.obj"),
             text: new Text_Line(35),
-            triangle: new defs.Triangle(),
-            axis: new defs.Axis_Arrows(),
-            t1: new defs.Rounded_Closed_Cone(10,10,[[0, 10], [0, 10]]),
-            t2: new defs.Closed_Cone(10,10,[[0, 10], [0, 10]]),
-            t3: new defs.Cone_Tip(10,10,[[0, 10], [0, 10]])
+            // triangle: new defs.Triangle(),
+            // axis: new defs.Axis_Arrows(),
+            // t1: new defs.Rounded_Closed_Cone(10,10,[[0, 10], [0, 10]]),
+            // t2: new defs.Closed_Cone(10,10,[[0, 10], [0, 10]]),
+            // t3: new defs.Cone_Tip(10,10,[[0, 10], [0, 10]])
         };
 
         // *** Materials
@@ -104,8 +121,12 @@ export class main_game extends Scene {
         this.initial_camera_location = Mat4.look_at(vec3(0, 6, 15), vec3(0, 6, 0), vec3(0, 1, 0));
         this.boat_view = Mat4.identity();
         this.pre_points = 0;
-        this.x_position = 0;
         this.MIDDLE = true;
+        this.pre_position = 0;
+        this.pre_position_z = 0;
+        //var values = [-5,-4,-3,-2,-1,0,1,2,3,4,5];
+        //this.values = shuffle[values]
+        //this.x = (getRandomInt(-20,20));
     }
 
     display_scene(context, program_state) {
@@ -145,32 +166,32 @@ export class main_game extends Scene {
         let right = r.times(Mat4.translation(-0.5,0,0));
 
         if (this.LEFT) {
-            middle = middle.times(Mat4.translation(-this.x_position, 0, 0))
+            middle = middle.times(Mat4.translation(-this.pre_position, 0, 0))
                 .times(Mat4.rotation(-Math.PI/5,0,0,1))
                 .times(Mat4.scale(1,7,1))
                 .times(Mat4.translation(-1.5,-5/7,0));
-            left = left.times(Mat4.translation(-this.x_position, 0, 0))
+            left = left.times(Mat4.translation(-this.pre_position, 0, 0))
                 .times(Mat4.rotation(-Math.PI/5,0,0,1))
                 .times(Mat4.rotation(Math.PI/15,0,0,1))
                 .times(Mat4.scale(0.5,7,1))
                 .times(Mat4.translation(0,-5/7,0));
-            right = right.times(Mat4.translation(-this.x_position, 0, 0))
+            right = right.times(Mat4.translation(-this.pre_position, 0, 0))
                 .times(Mat4.rotation(-Math.PI/5,0,0,1))
                 .times(Mat4.rotation(-Math.PI/15,0,0,1))
                 .times(Mat4.scale(0.5,7,1))
                 .times(Mat4.translation(-5,-5/7,0));
         }
         else if (this.RIGHT) {
-            middle = middle.times(Mat4.translation(-this.x_position, 0, 0))
+            middle = middle.times(Mat4.translation(-this.pre_position, 0, 0))
                 .times(Mat4.rotation(Math.PI/5,0,0,1))
                 .times(Mat4.scale(1,7,1))
                 .times(Mat4.translation(1.5,-5/7,0));
-            left = left.times(Mat4.translation(-1*this.x_position, 0, 0))
+            left = left.times(Mat4.translation(-1*this.pre_position, 0, 0))
                 .times(Mat4.rotation(Math.PI/5,0,0,1))
                 .times(Mat4.rotation(Math.PI/15,0,0,1))
                 .times(Mat4.scale(0.5,7,1))
                 .times(Mat4.translation(5,-5/7,0));
-            right = right.times(Mat4.translation(-this.x_position, 0, 0))
+            right = right.times(Mat4.translation(-this.pre_position, 0, 0))
                 .times(Mat4.rotation(Math.PI/5,0,0,1))
                 .times(Mat4.rotation(-Math.PI/15,0,0,1))
                 .times(Mat4.scale(0.5,7,1))
@@ -178,13 +199,13 @@ export class main_game extends Scene {
         }
         else {
             middle = middle.times(Mat4.scale(1,7,1))
-                .times(Mat4.translation(-1*this.x_position, -5/7,0));
+                .times(Mat4.translation(-1*this.pre_position, -5/7,0));
             left = left.times(Mat4.rotation(Math.PI/15, 0, 0, 1))
                 .times(Mat4.scale(0.5,7,1))
-                .times(Mat4.translation(3.5 - 2*this.x_position, -2/7 + 2*Math.min(0, this.x_position/10)/7,0));
+                .times(Mat4.translation(3.5 - 2*this.pre_position, -2/7 + 2*Math.min(0, this.pre_position/10)/7,0));
             right = right.times(Mat4.rotation(-Math.PI/15, 0, 0, 1))
                 .times(Mat4.scale(0.5,7,1))
-                .times(Mat4.translation(-3.5 - 2*this.x_position, -2/7 - 2*Math.max(0, this.x_position/10)/7,0));
+                .times(Mat4.translation(-3.5 - 2*this.pre_position, -2/7 - 2*Math.max(0, this.pre_position/10)/7,0));
         }
 
         this.shapes.back.draw(context, program_state, middle, this.materials.back_water2);
@@ -269,46 +290,59 @@ export class main_game extends Scene {
         // TODO: if we want to make it faster as time goes, then keep a counter over time and decrease the number we divide this.t by!
         // TODO: also, to make it more realistic, the shapes should be increasing in size as they approach us, so we should figure that out! should also apply to the mountains :3
         // TODO: also also, maybe randomize the x position to draw, store the past location in an array or something
-        this.planet1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%2)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
-        this.planet2 = model_transform.times(Mat4.translation(-12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
-        this.planet3 = model_transform.times(Mat4.translation(12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
-        // this.shapes.cube.draw(context, program_state, model_transform, this.materials.texture2);
-
-        // this.shapes.triangle.draw(context, program_state, model_transform.times(Mat4.translation(0,4,0)).times(Mat4.scale(2,2,2)), this.materials.texture2);
-        // this.shapes.t1.draw(context, program_state, model_transform.times(Mat4.translation(0,0,-2)).times(Mat4.scale(2,1.5,-5)), this.materials.texture1);
-        // this.shapes.t2.draw(context, program_state, model_transform.times(Mat4.translation(3,-.5,0)).times(Mat4.scale(2,1,-5)), this.materials.texture2);
-        // this.shapes.t3.draw(context, program_state, model_transform.times(Mat4.translation(-3,-.5,0)).times(Mat4.scale(2,1,-5)), this.materials.texture2);
+//         this.planet1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%2)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
+//         this.planet2 = model_transform.times(Mat4.translation(-12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
+//         this.planet3 = model_transform.times(Mat4.translation(12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
 
 
+        if (((this.t/3%2)*75-50) >= 80) 
+        {
+             this.x = (getRandomInt(-20,20));
+        }
+        if (((this.t/3%3 - 1)*75 - 50) >= 80)
+        {
+            this.x2 = (getRandomInt(-20,20));
+        }
+        if (((this.t/3%4 - 1)*75 - 50) >= 80)
+        {
+            this.x3 = (getRandomInt(-20,20));
+        }
+
+        this.planet1 = model_transform.times(Mat4.translation(this.x, 0, -60).times(Mat4.translation(0, 0, (this.t/3%2)*75 - 50)).times(Mat4.scale(3, 6, 1.5)));
+        this.planet2 = model_transform.times(Mat4.translation(this.x2, 0, -60).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5)));
+        this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5)));
+       
+        
         // button controls
         // TO-DO
 
-        this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2))
-        this.boat2 = this.boat2.times(Mat4.translation(this.x_position, 0, 0));
+        this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2));
+        this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0));
+
         if (this.RIGHT) {
-            if (this.x_position <= 10)
+            if (this.pre_position <= 10)
             {
-                this.x_position += 0.1;
+                this.pre_position += 0.1;
                 this.boat2 = this.boat2.times(Mat4.rotation(Math.PI/5, 0, 1, 0))
             }
-            else {
+            else
+            {
                 this.RIGHT = false;
             }
-            // this.RIGHT = false;
         }
         else if (this.LEFT) {
-            if (this.x_position >= -10) //WHEN X =-5, STOP MOVING!
-                 {
-                    this.x_position -= 0.1;
-                    this.boat2 = this.boat2.times(Mat4.rotation(-Math.PI/5, 0, 1, 0));
-                 }
-            else {
+            if (this.pre_position >= -10) //WHEN X = -10, STOP MOVING!
+            {
+                this.pre_position -= 0.1;
+                this.boat2 = this.boat2.times(Mat4.rotation(-Math.PI/5, 0, 1, 0));
+             }
+            else
+            {
                 this.LEFT = false;
             }
-            // this.LEFT = false;
         }
 
-        this.shapes.axis.draw(context, program_state, model_transform, this.materials.texture2);
+        // this.shapes.axis.draw(context, program_state, model_transform, this.materials.texture2);
 
         this.display_scene(context, program_state);
         const p = this.t + 4;
@@ -325,17 +359,12 @@ export class main_game extends Scene {
         this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0)))), this.materials.mountain);
         this.shapes.mountain.draw(context, program_state, model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0)))), this.materials.mountain);
 
-        // this.shapes.boat.draw(context, program_state, this.boat, this.materials.bumps);
-        // this.shapes.wheel.draw(context, program_state, this.wheel, this.materials.bumps);
-
         this.rock_the_boat();
         this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
 
-       // this.shapes.boat2.draw(context, program_state, model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0,2,2)), this.materials.boat2_fa);
-
-        // this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.ice);
-        // this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.ice);
-        // this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.ice);
+        this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.planet1);
+        this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.planet2);
+        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.planet3);
 
         if (this.attached) {
             if (this.attached() == this.initial_camera_location)
@@ -347,10 +376,6 @@ export class main_game extends Scene {
         this.pre_points = points;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
-        // this.shapes.triangle.draw(context, program_state, model_transform.times(Mat4.translation(0,2,0)), this.materials.ice);
-        // this.shapes.t1.draw(context, program_state, model_transform.times(Mat4.translation(2,4,0)), this.materials.ice);
-        // this.shapes.t2.draw(context, program_state, model_transform.times(Mat4.translation(-2,2,0)), this.materials.ice);
-        // this.shapes.t3.draw(context, program_state, model_transform.times(Mat4.translation(6,2,0)), this.materials.ice);
       }
 }
 
