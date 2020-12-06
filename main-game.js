@@ -123,7 +123,7 @@ export class main_game extends Scene {
         this.pre_points = 0;
         this.MIDDLE = true;
         this.pre_position = 0; // boat's x position
-        this.pre_position_z = 0;
+        this.pre_position_y = 0;
         this.alive = true;
         //var values = [-5,-4,-3,-2,-1,0,1,2,3,4,5];
         //this.values = shuffle[values]
@@ -346,8 +346,14 @@ export class main_game extends Scene {
 
 
         this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2));
-        this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0));
+        this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, this.pre_position_y, 0));
+    
 
+        if (this.alive == false) {
+            if (this.pre_position_y > -3) {
+                this.pre_position_y -= 0.05;
+            }
+        }
 
         if (this.alive) { // ONLY LET USER DO KEY CONTROLS IF THE PLAYER IS STILL ALIVE
 
