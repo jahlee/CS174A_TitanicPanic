@@ -44,9 +44,7 @@ export class main_game extends Scene {
         this.shapes = {
             sphere: new defs.Subdivision_Sphere(4),
             moon: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(4),
-            planet1: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
-            planet2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(4),
-            planet3: new defs.Subdivision_Sphere(1),
+            planet3: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
             water: new defs.Grid_Patch(20, 20, row_operation, column_operation),
             back: new defs.Grid_Patch(10, 10, row_operation2, column_operation2),
             // boat: new Shape_From_File("./assets/Boat.obj"),
@@ -55,7 +53,7 @@ export class main_game extends Scene {
             mtn: new Shape_From_File("./assets/lowpolymountains.obj"),
             cube: new Cube(),
             boat2: new Shape_From_File("./assets/boat2.obj"),
-            text: new Text_Line(35),
+            text: new Text_Line(45),
             // triangle: new defs.Triangle(),
             // axis: new defs.Axis_Arrows(),
             // t1: new defs.Rounded_Closed_Cone(10,10,[[0, 10], [0, 10]]),
@@ -66,13 +64,7 @@ export class main_game extends Scene {
         // *** Materials
         this.materials = {
             ice: new Material(new defs.Phong_Shader(),
-                {ambient: 0.5, diffusivity: 1, color: hex_color("#87ceeb")}),
-            planet1: new Material(new defs.Phong_Shader(),
-                {ambient: 0.5, diffusivity: 1, specularity: 0.5, color: color(1, 0, 0, 1)}),
-            planet2: new Material(new defs.Phong_Shader(),
-                {ambient: 0.5, diffusivity: 1, specularity: 0.5, color: color(0, 1, 0, 1)}),
-            planet3: new Material(new defs.Phong_Shader(),
-                {ambient: 0.5, diffusivity: 1, specularity: 0.5, color: color(0, 0, 1, 1)}),
+                {ambient: 0.75, diffusivity: 0.5, color: hex_color("#87ceeb")}),
             water: new Material(new defs.Phong_Shader(), {
                 ambient: 0.1, diffusivity: 1, specularity: 0, color: color(0.05, 0.05, 1, 0.875)}),
             old_water: new Material(new defs.Phong_Shader(),
@@ -458,9 +450,9 @@ export class main_game extends Scene {
         
 
         if (this.alive) {
-            this.planet1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(3, 6, 1.5));
-            this.planet2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(3, 6, 1.5));
-            this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(3, 6, 1.5));
+            this.planet1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(5, 7, 5));
+            this.planet2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(5.5, 7.5, 5.5));
+            this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(4, 6, 4));
         }
         
         let planet1z = time1 - 50;
@@ -470,7 +462,7 @@ export class main_game extends Scene {
        // collision detection
 
        if (this.alive) {
-            if ((Math.abs(planet1z - 57) < 3 && Math.abs(this.pre_position - this.x) < 3) || (Math.abs(planet2z - 57) < 3 && Math.abs(this.pre_position - this.x2) < 3) || (Math.abs(planet3z - 57) < 3 && Math.abs(this.pre_position - this.x3) < 3)) {  
+            if ((Math.abs(planet1z - 57) < 3 && Math.abs(this.pre_position - this.x) < 6) || (Math.abs(planet2z - 57) < 3 && Math.abs(this.pre_position - this.x2) < 6) || (Math.abs(planet3z - 57) < 3 && Math.abs(this.pre_position - this.x3) < 6)) {  
                 this.alive = false;
             }
 
@@ -558,17 +550,17 @@ export class main_game extends Scene {
             this.shapes.text.set_string("OH NO! OBSTACLES SPOTTED AHEAD!", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
         } else if (this.t < 7) {
-            this.shapes.text.set_string("STEER THIS BOAT TO SAFETY!", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
+            this.shapes.text.set_string("STEER THE BOAT TO SAFETY!", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-3.5, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
         } else {
-            if (this.size_count < 0.2) {
+            if (this.size_count < 0.17) {
                 this.size_count += 0.01
             }
-            this.shapes.text.set_string("USE THE LEFT ARROW KEY '<-' TO MOVE LEFT", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(2, 11.5, 0)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image);
+            this.shapes.text.set_string("USE THE LEFT AND RIGHT ARROW KEYS", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(1, 11.5, 0)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image);
 
-            this.shapes.text.set_string("USE THE RIGHT ARROW KEY '->' TO MOVE RIGHT", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(2, 11, 0)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image); 
+            this.shapes.text.set_string("TO STEER THE BOAT AND AVOID THE ICEBERGS", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(0, 11, 0)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image); 
         }      
 
       }
