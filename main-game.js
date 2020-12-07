@@ -489,7 +489,7 @@ export class main_game extends Scene {
        // collision detection
 
        if (this.alive) {
-            if ((Math.abs(iceberg1z - 57) < 6 && Math.abs(this.pre_position - this.x) < 5) || (Math.abs(iceberg2z - 57) < 6 && Math.abs(this.pre_position - this.x2) < 5) || (Math.abs(iceberg3z - 57) < 6 && Math.abs(this.pre_position - this.x3) < 5)) {  
+            if ((Math.abs(iceberg1z - 57) < 3 && Math.abs(this.pre_position - this.x) < 3) || (Math.abs(iceberg2z - 57) < 3 && Math.abs(this.pre_position - this.x2) < 3) || (Math.abs(iceberg3z - 57) < 3 && Math.abs(this.pre_position - this.x3) < 3)) {  
                 this.alive = false;
             }
        }
