@@ -552,9 +552,10 @@ export class main_game extends Scene {
         this.pre_points = points;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
-        if (points%500 == 0)
+        if (points%10 == 0)
         {
-             this.a = this.a/1.1;
+             this.a = this.a/1.001;
+
         }
 
 
