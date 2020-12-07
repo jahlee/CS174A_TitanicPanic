@@ -126,6 +126,8 @@ export class main_game extends Scene {
         this.holding = false;
         this.stopL = true;
         this.stopR = true;
+        this.pre_highscore = 0;
+        this.new_highscore = false;
 
         this.rmountain1 = this.rmountain2 = this.rmountain3 = this.rmountain4 = this.lmountain1 = this.lmountain2 = this.lmountain3 = this.lmountain4 = Mat4.identity();
 
@@ -476,6 +478,7 @@ export class main_game extends Scene {
             this.LEFT = false;
             //put initial text again
             this.startGame = false;
+            this.new_highscore = false;
         }
 
         let iceberg1z = time1 - 50;
@@ -534,6 +537,7 @@ export class main_game extends Scene {
         this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
 
         let points = this.pre_points;
+        let highscore = this.pre_highscore;
 
         this.shapes.iceberg.draw(context, program_state, this.iceberg1, this.materials.ice);
         this.shapes.iceberg.draw(context, program_state, this.iceberg2, this.materials.ice);
@@ -541,7 +545,11 @@ export class main_game extends Scene {
 
 
         if (this.alive) { // Only increment points while player is alive
-            points++;
+            points += 10;
+            if (points > highscore) {
+                highscore = points;
+                this.new_highscore = true;
+            }
         } else { // Game over screen upon losing
             this.shapes.text.set_string("GAME", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
@@ -549,16 +557,29 @@ export class main_game extends Scene {
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
             this.shapes.text.set_string("Press P to try again", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 3, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+            if (this.new_highscore) {
+                this.shapes.text.set_string("*NEW HIGHSCORE!*", context.context);
+                this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-3.5, 2, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+            }
         }
 
         this.pre_points = points;
+        this.pre_highscore = highscore;
 
-        this.pre_points = points;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
+<<<<<<< Updated upstream
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
+        if (points%10 == 0)
+=======
+        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 11.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+        this.shapes.text.set_string("HIGHSCORE: " + highscore.toString(), context.context);
+        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 10.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+
         if (points%500 == 0)
+>>>>>>> Stashed changes
         {
-             this.a = this.a/1.1;
+             this.a = this.a/1.001;
+
         }
 
 
