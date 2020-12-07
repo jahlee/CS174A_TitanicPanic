@@ -122,12 +122,13 @@ export class main_game extends Scene {
         this.boat_view = Mat4.identity();
         this.pre_points = 0;
         this.pre_position = 0; // boat's x position
-        this.pre_position_z = 0;
+        this.pre_position_y = 0;
         this.alive = true;
         //var values = [-5,-4,-3,-2,-1,0,1,2,3,4,5];
         //this.values = shuffle[values]
         //this.x = (getRandomInt(-20,20));
         this.a =3;
+        this.size_count = 0;
 
         this.vel = 0;
         this.holding = false;
@@ -135,6 +136,7 @@ export class main_game extends Scene {
         this.stopR = true;
 
         this.rmountain1 = this.rmountain2 = this.rmountain3 = this.rmountain4 = this.lmountain1 = this.lmountain2 = this.lmountain3 = this.lmountain4 = Mat4.identity();
+
     }
 
     display_scene(context, program_state) {
@@ -468,17 +470,23 @@ export class main_game extends Scene {
        // collision detection
 
        if (this.alive) {
-            if ((Math.abs(planet1z - 57) < 1 && Math.abs(this.pre_position - this.x) < 2) || (Math.abs(planet2z - 57) < 1 && Math.abs(this.pre_position - this.x2) < 2) || (Math.abs(planet3z - 57) < 1 && Math.abs(this.pre_position - this.x3) < 2)) {  
+            if ((Math.abs(planet1z - 57) < 3 && Math.abs(this.pre_position - this.x) < 3) || (Math.abs(planet2z - 57) < 3 && Math.abs(this.pre_position - this.x2) < 3) || (Math.abs(planet3z - 57) < 3 && Math.abs(this.pre_position - this.x3) < 3)) {  
                 this.alive = false;
             }
 
        }
 
-
         this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2));
-        this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0));
+        this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, this.pre_position_y, 0));
 
-        this.turn_boat();
+        if (!this.alive) {
+            if (this.pre_position_y > -5) {
+                this.pre_position_y -= 0.05;
+            }
+        }
+        else {
+            this.turn_boat();
+        }
 
         // this.shapes.axis.draw(context, program_state, model_transform, this.materials.texture2);
 
@@ -524,9 +532,9 @@ export class main_game extends Scene {
             points++;
         } else { // Game over screen upon losing
             this.shapes.text.set_string("GAME", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*10)/10)), this.materials.text_image);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
             this.shapes.text.set_string("OVER", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*10)/10)), this.materials.text_image);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
         }
 
        this.pre_points = points;
@@ -543,6 +551,26 @@ export class main_game extends Scene {
         {
              this.a = this.a/1.1;
         }
+
+
+        // beginning game dialogue
+        if (this.t < 3) {
+            this.shapes.text.set_string("OH NO! OBSTACLES SPOTTED AHEAD!", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
+        } else if (this.t < 7) {
+            this.shapes.text.set_string("STEER THIS BOAT TO SAFETY!", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
+        } else {
+            if (this.size_count < 0.2) {
+                this.size_count += 0.01
+            }
+            this.shapes.text.set_string("USE THE LEFT ARROW KEY '<-' TO MOVE LEFT", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(2, 11.5, 0)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image);
+
+            this.shapes.text.set_string("USE THE RIGHT ARROW KEY '->' TO MOVE RIGHT", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(2, 11, 0)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image); 
+        }      
+
       }
 }
 
