@@ -121,7 +121,6 @@ export class main_game extends Scene {
         this.initial_camera_location = Mat4.look_at(vec3(0, 6, 15), vec3(0, 6, 0), vec3(0, 1, 0));
         this.boat_view = Mat4.identity();
         this.pre_points = 0;
-        this.MIDDLE = true;
         this.pre_position = 0; // boat's x position
         this.pre_position_z = 0;
         this.alive = true;
@@ -129,6 +128,11 @@ export class main_game extends Scene {
         //this.values = shuffle[values]
         //this.x = (getRandomInt(-20,20));
         this.a =3;
+
+        this.vel = 0;
+        this.holding = false;
+        this.stopL = true;
+        this.stopR = true;
 
         this.rmountain1 = this.rmountain2 = this.rmountain3 = this.rmountain4 = this.lmountain1 = this.lmountain2 = this.lmountain3 = this.lmountain4 = Mat4.identity();
     }
@@ -158,7 +162,7 @@ export class main_game extends Scene {
         // same for the back water behind the boat
 
         this.shapes.back.arrays.position.forEach((p, i, a) =>
-            a[i] = vec3(p[0], p[1], 0.5*Math.sin(random(i/a.length))));
+            a[i] = vec3(p[0], p[1], 0.75*Math.sin(random(i/a.length))));
         this.shapes.back.flat_shade();
         // boat is 0.8*2 in width, so 1 quarter is 0.4
 
@@ -236,19 +240,147 @@ export class main_game extends Scene {
         this.boat2 = this.boat2.times(Mat4.rotation(0.1 - 0.25*Math.abs(Math.cos(this.t*0.8)**2),1,0,0));
     }
 
-    make_control_panel() {
-        this.key_triggered_button("Go Left", ["x"], () => {
+    check_key_pressed(c) {
+        /*
+        document.addEventListener('keyup', function (evt) {
+                if (evt.code === 'KeyX') {
+                    this.vel = Math.min(0, this.vel + 0.1);
+                }
+            });
+
+            document.addEventListener('keyup', function (evt) {
+                if (evt.key === 'v') {
+                    console.clear();
+                }
+            });
+         */
+
+        // NOTE: the logic for keyboard is different than the typical key pressing we use. For that reason, the if statement below is only for the website buttons
+        if (c == 'L') {
             this.LEFT = true;
             this.RIGHT = false;
-        }); 
-
-        this.key_triggered_button("Go Right", ["v"], () => {
+            this.stopL = true;
+        }
+        else if (c == 'R') {
             this.RIGHT = true;
             this.LEFT = false;
+            this.stopR = true;
+        }
+
+        const DOWN_KEYS = {
+            ArrowLeft: () => {
+                this.LEFT = true;
+                this.stopL = false;
+            },
+            ArrowRight: () => {
+                this.RIGHT = true;
+                this.stopL = false;
+            },
+        };
+
+        const UP_KEYS = {
+            ArrowLeft: () => {
+                this.stopL = true;
+                this.LEFT = false;
+            },
+            ArrowRight: () => {
+                this.stopR = true;
+                this.RIGHT = false;
+            },
+        };
+
+        if (!this.holding) {
+            document.addEventListener('keydown', (e) => {
+                e.preventDefault();
+
+                const handler = DOWN_KEYS[e.code];
+
+                if (handler) {
+                    handler();
+                    this.holding = true;
+                    return;
+                }
+            });
+        }
+        document.addEventListener('keyup', (e) => {
+            e.preventDefault();
+
+            const handler = UP_KEYS[e.code];
+
+            if (handler) {
+                handler();
+                this.holding = false;
+                return;
+            }
+        });
+    }
+
+    turn_boat() {
+        if (this.alive) { // ONLY LET USER DO KEY CONTROLS IF THE PLAYER IS STILL ALIVE
+
+            this.boat2 = Mat4.identity().times(Mat4.scale(1,1,-1))
+                .times(Mat4.translation(0.1,1.75,2))
+                .times(Mat4.translation(this.pre_position, 0, 0));
+
+            if (this.RIGHT) {
+                this.vel += 0.0075;
+                this.boat2 = this.boat2.times(Mat4.rotation(-Math.PI/8, 0, -0.5, 1));
+            }
+            else if (this.LEFT) {
+                this.vel -= 0.0075;
+                this.boat2 = this.boat2.times(Mat4.rotation(Math.PI/8, 0, -0.5, 1));
+            }
+            else if (this.stopL) {
+                this.vel = Math.min(this.vel + 0.010, 0);
+            }
+            else if (this.stopR) {
+                this.vel = Math.max(this.vel - 0.010, 0);
+            }
+            this.pre_position += this.vel;
+            if (this.pre_position > 10) {
+                this.pre_position = 10;
+                this.vel = 0;
+            }
+            else if (this.pre_position < -10) {
+                this.pre_position = -10;
+                this.vel = 0;
+            }
+        }
+        // document.addEventListener('keyup', (event) => {
+        //     if(event.repeat) {
+        //         // key is being held down
+        //     } else {
+        //         // key is being pressed
+        //     }
+        // });
+        // document.onkeydown = function(e){
+        //     var keycode = window.event ? window.event.keyCode : e.which;
+        //     if(keycode == 40){
+        //         var timer = setTimeout(function(){
+        //             alert('Down key held');
+        //             document.onkeyup = function(){};
+        //         }, 200);
+        //         document.onkeyup = function(){
+        //             clearTimeout(timer);
+        //             alert('Down key pressed');
+        //         }
+        //     }
+        // };
+    }
+
+    make_control_panel() {
+        // check the left and right functions elsewhere, keep it here so you can technically press it on the website too
+        this.key_triggered_button("Go Left [←]", ["ArrowLeft"], () => {
+            this.check_key_pressed('L');
+        }); 
+
+        this.key_triggered_button("Go Right [→]", ["ArrowRight"], () => {
+            this.check_key_pressed('R');
         });
         
         //this.key_triggered_button("Boat view", ["b"], () => this.attached = () => this.initial_camera_location);
     }
+    
 
     // MAIN DISPLAY
     display(context, program_state) {
@@ -346,31 +478,7 @@ export class main_game extends Scene {
         this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2));
         this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0));
 
-
-        if (this.alive) { // ONLY LET USER DO KEY CONTROLS IF THE PLAYER IS STILL ALIVE
-
-            this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2));
-            this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, 0, 0));
-
-            if (this.RIGHT) {
-                 if (this.pre_position <= 10) //WHEN X = -10, STOP MOVING!
-                {
-                    this.pre_position += 0.1;
-                    this.boat2 = this.boat2.times(Mat4.rotation(Math.PI/5, 0, 1, 0));
-                 } else {
-                     this.RIGHT = false;
-                 }
-            }
-            else if (this.LEFT) {
-                if (this.pre_position >= -10) //WHEN X = -10, STOP MOVING!
-                {
-                    this.pre_position -= 0.1;
-                    this.boat2 = this.boat2.times(Mat4.rotation(-Math.PI/5, 0, 1, 0));
-                 } else {
-                     this.LEFT = false;
-                 }
-            }
-        }
+        this.turn_boat();
 
         // this.shapes.axis.draw(context, program_state, model_transform, this.materials.texture2);
 
