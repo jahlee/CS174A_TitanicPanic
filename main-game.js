@@ -479,6 +479,7 @@ export class main_game extends Scene {
             //put initial text again
             this.startGame = false;
             this.new_highscore = false;
+            this.a = 3;
         }
 
         let iceberg1z = time1 - 50;
@@ -565,18 +566,12 @@ export class main_game extends Scene {
 
         this.pre_points = points;
         this.pre_highscore = highscore;
-
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
-<<<<<<< Updated upstream
-        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
-        if (points%10 == 0)
-=======
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 11.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
         this.shapes.text.set_string("HIGHSCORE: " + highscore.toString(), context.context);
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 10.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
 
-        if (points%500 == 0)
->>>>>>> Stashed changes
+        if (points%10 == 0)
         {
              this.a = this.a/1.001;
 
