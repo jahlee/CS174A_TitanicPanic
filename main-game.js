@@ -44,7 +44,7 @@ export class main_game extends Scene {
         this.shapes = {
             sphere: new defs.Subdivision_Sphere(4),
             moon: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(4),
-            planet3: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
+            iceberg: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
             water: new defs.Grid_Patch(20, 20, row_operation, column_operation),
             back: new defs.Grid_Patch(10, 10, row_operation2, column_operation2),
             // boat: new Shape_From_File("./assets/Boat.obj"),
@@ -145,8 +145,8 @@ export class main_game extends Scene {
 
         // Draw the current sheet shape.
         // translation here specifies bottom right corner
-        this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.movecartoon);
-        // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.rotatecartoon);
+        // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.movecartoon);
+         this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.rotatecartoon);
         // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.cartoon);
         // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.water);
 
@@ -340,6 +340,8 @@ export class main_game extends Scene {
                 this.vel = 0;
             }
         }
+
+        // alternate way for movement
         // document.addEventListener('keyup', (event) => {
         //     if(event.repeat) {
         //         // key is being held down
@@ -375,7 +377,6 @@ export class main_game extends Scene {
         this.key_triggered_button("Play Game", ["p"], () => {
             this.startGame = true;
         })
-        //this.key_triggered_button("Boat view", ["b"], () => this.attached = () => this.initial_camera_location);
     }
     
 
@@ -416,14 +417,11 @@ export class main_game extends Scene {
         // day-time (blue sky)
         this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.sky);
 
-
+        // original algorithm for iceberg spawning
         // use modulus to make planets cycle back to initial position after 2, 3, 4 seconds
-        // TODO: if we want to make it faster as time goes, then keep a counter over time and decrease the number we divide this.t by!
-        // TODO: also, to make it more realistic, the shapes should be increasing in size as they approach us, so we should figure that out! should also apply to the mountains :3
-        // TODO: also also, maybe randomize the x position to draw, store the past location in an array or something
-//         this.planet1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%2)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
-//         this.planet2 = model_transform.times(Mat4.translation(-12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
-//         this.planet3 = model_transform.times(Mat4.translation(12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
+//         this.iceberg1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%2)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
+//         this.iceberg2 = model_transform.times(Mat4.translation(-12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
+//         this.iceberg3 = model_transform.times(Mat4.translation(12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
 
         //NOTE: THIS.A MUST STAY ABOVE 0
         let time1 = (this.t/this.a%2)*75;
@@ -454,9 +452,9 @@ export class main_game extends Scene {
         
 
         if (this.alive) {
-            this.planet1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(5, 7, 5));
-            this.planet2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(5.5, 7.5, 5.5));
-            this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(4, 6, 4));
+            this.iceberg1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(3, 5, 5));
+            this.iceberg2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(5, 7, 5.5));
+            this.iceberg3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(4, 6, 4));
         }
 
         if (this.startGame) {
@@ -476,14 +474,14 @@ export class main_game extends Scene {
             this.startGame = false;
         }
 
-        let planet1z = time1 - 50;
-        let planet2z = time2 - 50;
-        let planet3z = time3 - 50;
+        let iceberg1z = time1 - 50;
+        let iceberg2z = time2 - 50;
+        let iceberg3z = time3 - 50;
 
        // collision detection
 
        if (this.alive) {
-            if ((Math.abs(planet1z - 57) < 5 && Math.abs(this.pre_position - this.x) < 6) || (Math.abs(planet2z - 57) < 5 && Math.abs(this.pre_position - this.x2) < 6) || (Math.abs(planet3z - 57) < 5 && Math.abs(this.pre_position - this.x3) < 6)) {  
+            if ((Math.abs(iceberg1z - 57) < 5 && Math.abs(this.pre_position - this.x) < 5) || (Math.abs(iceberg2z - 57) < 5 && Math.abs(this.pre_position - this.x2) < 5) || (Math.abs(iceberg3z - 57) < 5 && Math.abs(this.pre_position - this.x3) < 5)) {  
                 this.alive = false;
             }
        }
@@ -499,8 +497,6 @@ export class main_game extends Scene {
         else {
             this.turn_boat();
         }
-
-        // this.shapes.axis.draw(context, program_state, model_transform, this.materials.texture2);
 
         this.display_scene(context, program_state);
         const p = this.t + 4;
@@ -535,9 +531,9 @@ export class main_game extends Scene {
 
         let points = this.pre_points;
 
-        this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.ice);
-        this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.ice);
-        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.ice);
+        this.shapes.iceberg.draw(context, program_state, this.iceberg1, this.materials.ice);
+        this.shapes.iceberg.draw(context, program_state, this.iceberg2, this.materials.ice);
+        this.shapes.iceberg.draw(context, program_state, this.iceberg3, this.materials.ice);
 
 
         if (this.alive) { // Only increment points while player is alive
@@ -551,12 +547,7 @@ export class main_game extends Scene {
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 3, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
         }
 
-       this.pre_points = points;
-
-//         if (this.attached) {
-//             if (this.attached() == this.initial_camera_location)
-//                 program_state.set_camera(this.initial_camera_location);
-//         }
+        this.pre_points = points;
 
         this.pre_points = points;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
