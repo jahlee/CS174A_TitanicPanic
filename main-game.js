@@ -248,7 +248,10 @@ export class main_game extends Scene {
             this.RIGHT = true;
             this.LEFT = false;
         });
-        
+
+        this.key_triggered_button("Play Game", ["p"], () => {
+            this.startGame = true;
+        })
         //this.key_triggered_button("Boat view", ["b"], () => this.attached = () => this.initial_camera_location);
     }
 
@@ -258,6 +261,7 @@ export class main_game extends Scene {
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
             program_state.set_camera(this.initial_camera_location);
+            this.firstRound = true;
         }
 
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, .1, 1000);
@@ -297,12 +301,12 @@ export class main_game extends Scene {
 //         this.planet2 = model_transform.times(Mat4.translation(-12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
 //         this.planet3 = model_transform.times(Mat4.translation(12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
 
+        //NOTE: THIS.A MUST STAY ABOVE 0
+        let time1 = (this.t/this.a%2)*75;
+        let time2 = (this.t/this.a%3 - 1)*75;
+        let time3 = (this.t/this.a%4 - 1)*75;
+        let time4 = (this.t/this.a%5 - 1)*75;
 
-       //NOTE: THIS.A MUST STAY ABOVE 0
-        let time1 = (this.t/this.a%2)*75
-        let time2= (this.t/this.a%3 - 1)*75
-        let time3= (this.t/this.a%4 - 1)*75
-        let time4 = (this.t/this.a%5 - 1)*75
 
         if (time1 >= 130) 
         {
@@ -330,7 +334,23 @@ export class main_game extends Scene {
             this.planet2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(3, 6, 1.5));
             this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(3, 6, 1.5));
         }
-        
+
+        if (this.startGame) {
+            this.firstRound = false;
+            //set score to 0
+            this.pre_points = 0;
+            //reset icebergs
+            program_state.animation_time = 0;
+            //put boat at center
+            this.pre_position = 0;
+            this.alive = true;
+            //reset boat movement
+            this.RIGHT = false;
+            this.LEFT = false;
+            //put initial text again
+            this.startGame = false;
+        }
+
         let planet1z = time1 - 50;
         let planet2z = time2 - 50;
         let planet3z = time3 - 50;
@@ -341,7 +361,6 @@ export class main_game extends Scene {
             if ((Math.abs(planet1z - 57) < 3 && Math.abs(this.pre_position - this.x) < 3) || (Math.abs(planet2z - 57) < 3 && Math.abs(this.pre_position - this.x2) < 3) || (Math.abs(planet3z - 57) < 3 && Math.abs(this.pre_position - this.x3) < 3)) {  
                 this.alive = false;
             }
-
        }
 
 
@@ -427,6 +446,8 @@ export class main_game extends Scene {
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
             this.shapes.text.set_string("OVER", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
+            this.shapes.text.set_string("Press P to try again", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4, 3, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
         }
 
        this.pre_points = points;
@@ -446,10 +467,11 @@ export class main_game extends Scene {
 
 
         // beginning game dialogue
-        if (this.t < 3) {
+        if (this.t < 3 && this.firstRound) {
+            //this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.logo);
             this.shapes.text.set_string("OH NO! OBSTACLES SPOTTED AHEAD!", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
-        } else if (this.t < 7) {
+        } else if (this.t < 7 && this.firstRound) {
             this.shapes.text.set_string("STEER THIS BOAT TO SAFETY!", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
         } else {
