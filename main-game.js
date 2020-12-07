@@ -74,7 +74,7 @@ export class main_game extends Scene {
             bumps: new Material(new defs.Fake_Bump_Map(1),
                 {color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/stars.png")}),
             sky: new Material(new defs.Phong_Shader(),
-                {ambient: 0.9, diffusivity: 0, specularity: 0, color: hex_color("#87ceeb")}),
+                {ambient: 0.9, diffusivity: 1, specularity: 0.5, color: hex_color("#87ceeb")}),
             night_sky: new Material(new defs.Phong_Shader(),
                 {ambient: 0.9, diffusivity: 0, specularity: 0, color: hex_color("#000000")}),
             sun: new Material(new defs.Phong_Shader(),
@@ -105,7 +105,7 @@ export class main_game extends Scene {
             back_water2: new Material(new Texture_Rotate(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0.3,0.3,0.8,0.2), texture: new Texture("assets/oc.jpg")}),
             back_water3: new Material(new defs.Textured_Phong(1), {ambient: 0.8, diffusivity: 1, specularity: 0.7, color: color(0.3,0.3,0.8,0.2), texture: new Texture("assets/oc.jpg")}),
             cartoon: new Material(new defs.Textured_Phong(1), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0,0,1,0.7), texture: new Texture("assets/cartoonsea.png")}),
-            movecartoon: new Material(new Texture_Scroll_X(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.2, color: color(0,0,0.35,0.8), texture: new Texture("assets/cartoonsea.png")}),  //hex_color("#00002A")
+            movecartoon: new Material(new Texture_Scroll_X(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.2, color: color(0.1,0.15,0.9,1), texture: new Texture("assets/cartoonsea.png")}),  //hex_color("#00002A")
             rotatecartoon: new Material(new Texture_Rotate(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0,0,1,0.7), texture: new Texture("assets/cartoonsea.png")})
         };
 
@@ -119,7 +119,8 @@ export class main_game extends Scene {
         //var values = [-5,-4,-3,-2,-1,0,1,2,3,4,5];
         //this.values = shuffle[values]
         //this.x = (getRandomInt(-20,20));
-        this.a =3;
+        this.a = this.a1 = this.a2 = this.a3 = 3;
+        this.first_fast = this.second_fast = this.third_fast = true;
         this.size_count = 0;
 
         this.vel = 0;
@@ -147,8 +148,8 @@ export class main_game extends Scene {
 
         // Draw the current sheet shape.
         // translation here specifies bottom right corner
-        // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.movecartoon);
-         this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.rotatecartoon);
+        this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.movecartoon);
+         // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.rotatecartoon);
         // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.cartoon);
         // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.water);
 
@@ -156,7 +157,6 @@ export class main_game extends Scene {
         this.shapes.water.copy_onto_graphics_card(context.context, ["position", "normal"], false);
 
         // same for the back water behind the boat
-
         this.shapes.back.arrays.position.forEach((p, i, a) =>
             a[i] = vec3(p[0], p[1], 0.75*Math.sin(random(i/a.length))));
         this.shapes.back.flat_shade();
@@ -237,20 +237,6 @@ export class main_game extends Scene {
     }
 
     check_key_pressed(c) {
-        /*
-        document.addEventListener('keyup', function (evt) {
-                if (evt.code === 'KeyX') {
-                    this.vel = Math.min(0, this.vel + 0.1);
-                }
-            });
-
-            document.addEventListener('keyup', function (evt) {
-                if (evt.key === 'v') {
-                    console.clear();
-                }
-            });
-         */
-
         // NOTE: the logic for keyboard is different than the typical key pressing we use. For that reason, the if statement below is only for the website buttons
         if (c == 'L') {
             this.LEFT = true;
@@ -342,28 +328,6 @@ export class main_game extends Scene {
                 this.vel = 0;
             }
         }
-
-        // alternate way for movement
-        // document.addEventListener('keyup', (event) => {
-        //     if(event.repeat) {
-        //         // key is being held down
-        //     } else {
-        //         // key is being pressed
-        //     }
-        // });
-        // document.onkeydown = function(e){
-        //     var keycode = window.event ? window.event.keyCode : e.which;
-        //     if(keycode == 40){
-        //         var timer = setTimeout(function(){
-        //             alert('Down key held');
-        //             document.onkeyup = function(){};
-        //         }, 200);
-        //         document.onkeyup = function(){
-        //             clearTimeout(timer);
-        //             alert('Down key pressed');
-        //         }
-        //     }
-        // };
     }
 
     make_control_panel() {
@@ -398,26 +362,26 @@ export class main_game extends Scene {
         this.t = program_state.animation_time / 1000;
         this.dt = program_state.animation_delta_time / 1000;
 
-        // emitted light
-        const light_position = vec4(0,30,-85, 1);
-        const boat_position = vec4(0,2,-3,1);
-        const sun_pos = vec4(-25, 10, -80, 1);
+        let hour = this.t;
+        let cycle = Math.cos(hour * Math.PI / 30);
+        let abs_cycle = Math.abs(cycle);
 
-        // night-time lights
-        // program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 15**3), new Light(boat_position, color(1,1,1,1), 10**2)];
-        // let sun_transform = model_transform.times(Mat4.translation(0,20,-105)).times(Mat4.scale(5,5,5));
-        // // night-time (moon)
-        // this.shapes.moon.draw(context, program_state, sun_transform, this.materials.moon);
-        // // night-time (black sky)
-        // this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.night_sky);
+        // lights: one from sun/moon, one from boat
+        program_state.lights = [new Light(vec4(0, Math.ceil(30*abs_cycle) - 5,-105,1), color(1, 1, 1, 1), 15**3), new Light(vec4(this.pre_position,this.pre_position_y + 1,0,1), color(1,1,1,1), 25)];
 
-        // day-time lights
-        program_state.lights = [new Light(light_position, color(0.4,0.4,0.4,1), 10**5), new Light(vec4(0,20,-30,1), color(0.75,0.75,0.75,1), 15**3)];
-        let sun_transform = model_transform.times(Mat4.translation(0,20,-105)).times(Mat4.scale(5,5,5));
+        let cycle_scale1 = Math.max(cycle, 0) * 1.5;
+        let cycle_scale2 = Math.max(-cycle, 0) * 1.5;
+        let sun_transform = model_transform.times(Mat4.translation(0,30*cycle - 5,-105)).times(Mat4.scale(3.5 + cycle_scale1, 3.5 + cycle_scale1, 3.5 + cycle_scale1));
+        let moon_transform = model_transform.times(Mat4.translation(0,-30*cycle - 5,-105)).times(Mat4.scale(3.5 + cycle_scale2, 3.5 + cycle_scale2, 3.5 + cycle_scale2));
+
         // day-time (sun)
-        this.shapes.sphere.draw(context, program_state, sun_transform, this.materials.sun);
-        // day-time (blue sky)
-        this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.sky);
+        this.shapes.sphere.draw(context, program_state, sun_transform, this.materials.sun.override({color: color(0.941*(cycle) + 0.992*(1-cycle), 0.902*(cycle) + 0.500*(1-cycle), 0.549*(cycle) + 0.369*(1-cycle), 1)}));
+        this.shapes.moon.draw(context, program_state, moon_transform, this.materials.moon);
+
+        // outside lighting/color
+        let cycle_sky = Math.max(cycle, 0);
+        this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))),
+            this.materials.sky.override({color: color(0.451*(abs_cycle) + 0.984*(1-abs_cycle), 0.761*(abs_cycle) + 0.812*(1-abs_cycle), 0.984*(abs_cycle) + 0.404*(1-abs_cycle), 1), ambient: cycle_sky}));
 
         // original algorithm for iceberg spawning
         // use modulus to make planets cycle back to initial position after 2, 3, 4 seconds
@@ -425,37 +389,26 @@ export class main_game extends Scene {
 //         this.iceberg2 = model_transform.times(Mat4.translation(-12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
 //         this.iceberg3 = model_transform.times(Mat4.translation(12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
 
-        //NOTE: THIS.A MUST STAY ABOVE 0
-        let time1 = (this.t/this.a%2)*75;
-        let time2 = (this.t/this.a%3 - 1)*75;
-        let time3 = (this.t/this.a%4 - 1)*75;
-        let time4 = (this.t/this.a%5 - 1)*75;
-
+       //NOTE: THIS.A MUST STAY ABOVE 0
+        let time1 = ((this.t/this.a)%2)*75;
+        let time2 = ((this.t/this.a)%3)*75;
+        let time3 = ((this.t/this.a)%4)*75;
 
         if (time1 >= 130) 
         {
              this.x = (getRandomInt(-10,10));
              this.angle1 = (getRandomInt(0, 10));
-             //this.x = values[Math.floor(Math.random() * values.length)]
         }
-
         if (time2 >= 130)
         {
             this.x2 = (getRandomInt(-10,10));
             this.angle2 = (getRandomInt(0, 10));
- 
         }
         if (time3 >= 130)
         {
             this.x3 = (getRandomInt(-10,10));
             this.angle3 = (getRandomInt(0, 10));
         }
-        if (time3 >= 130)
-        {
-            this.x4 = (getRandomInt(-10,10));
-            this.angle4 = (getRandomInt(0, 10));
-        }
-        
 
         if (this.alive) {
             this.iceberg1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(2, 4, 5)).times(Mat4.rotation(this.angle1, 1, 0, 0));
@@ -574,7 +527,6 @@ export class main_game extends Scene {
         if (points%20 == 0)
         {
              this.a = this.a/1.001;
-
         }
 
 
