@@ -433,28 +433,32 @@ export class main_game extends Scene {
         if (time1 >= 130) 
         {
              this.x = (getRandomInt(-10,10));
+             this.angle1 = (getRandomInt(0, 10));
              //this.x = values[Math.floor(Math.random() * values.length)]
         }
 
         if (time2 >= 130)
         {
             this.x2 = (getRandomInt(-10,10));
+            this.angle2 = (getRandomInt(0, 10));
  
         }
         if (time3 >= 130)
         {
             this.x3 = (getRandomInt(-10,10));
+            this.angle3 = (getRandomInt(0, 10));
         }
         if (time3 >= 130)
         {
             this.x4 = (getRandomInt(-10,10));
+            this.angle4 = (getRandomInt(0, 10));
         }
         
 
         if (this.alive) {
-            this.iceberg1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(3, 5, 5));
-            this.iceberg2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(5, 7, 5.5));
-            this.iceberg3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(4, 6, 4));
+            this.iceberg1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(3, 5, 5)).times(Mat4.rotation(this.angle1, 1, 0, 0));
+            this.iceberg2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(5, 7, 5.5)).times(Mat4.rotation(this.angle2, 1, 0, 0));
+            this.iceberg3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(4, 6, 4)).times(Mat4.rotation(this.angle3, 1, 0, 0))
         }
 
         if (this.startGame) {
