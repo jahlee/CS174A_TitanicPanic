@@ -44,7 +44,7 @@ export class main_game extends Scene {
         this.shapes = {
             sphere: new defs.Subdivision_Sphere(4),
             moon: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(4),
-            planet3: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
+            iceberg: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
             water: new defs.Grid_Patch(20, 20, row_operation, column_operation),
             back: new defs.Grid_Patch(10, 10, row_operation2, column_operation2),
             // boat: new Shape_From_File("./assets/Boat.obj"),
@@ -105,7 +105,7 @@ export class main_game extends Scene {
             back_water2: new Material(new Texture_Rotate(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0.3,0.3,0.8,0.2), texture: new Texture("assets/oc.jpg")}),
             back_water3: new Material(new defs.Textured_Phong(1), {ambient: 0.8, diffusivity: 1, specularity: 0.7, color: color(0.3,0.3,0.8,0.2), texture: new Texture("assets/oc.jpg")}),
             cartoon: new Material(new defs.Textured_Phong(1), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0,0,1,0.7), texture: new Texture("assets/cartoonsea.png")}),
-            movecartoon: new Material(new Texture_Scroll_X(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.2, color: color(0,0,0.35,1), texture: new Texture("assets/cartoonsea.png")}),  //hex_color("#00002A")
+            movecartoon: new Material(new Texture_Scroll_X(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.2, color: color(0.1,0.15,0.9,1), texture: new Texture("assets/cartoonsea.png")}),  //hex_color("#00002A")
             rotatecartoon: new Material(new Texture_Rotate(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0,0,1,0.7), texture: new Texture("assets/cartoonsea.png")})
         };
 
@@ -127,6 +127,8 @@ export class main_game extends Scene {
         this.holding = false;
         this.stopL = true;
         this.stopR = true;
+        this.pre_highscore = 0;
+        this.new_highscore = false;
 
         this.rmountain1 = this.rmountain2 = this.rmountain3 = this.rmountain4 = this.lmountain1 = this.lmountain2 = this.lmountain3 = this.lmountain4 = Mat4.identity();
 
@@ -147,7 +149,7 @@ export class main_game extends Scene {
         // Draw the current sheet shape.
         // translation here specifies bottom right corner
         this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.movecartoon);
-        // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.rotatecartoon);
+         // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.rotatecartoon);
         // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.cartoon);
         // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.water);
 
@@ -235,20 +237,6 @@ export class main_game extends Scene {
     }
 
     check_key_pressed(c) {
-        /*
-        document.addEventListener('keyup', function (evt) {
-                if (evt.code === 'KeyX') {
-                    this.vel = Math.min(0, this.vel + 0.1);
-                }
-            });
-
-            document.addEventListener('keyup', function (evt) {
-                if (evt.key === 'v') {
-                    console.clear();
-                }
-            });
-         */
-
         // NOTE: the logic for keyboard is different than the typical key pressing we use. For that reason, the if statement below is only for the website buttons
         if (c == 'L') {
             this.LEFT = true;
@@ -340,26 +328,6 @@ export class main_game extends Scene {
                 this.vel = 0;
             }
         }
-        // document.addEventListener('keyup', (event) => {
-        //     if(event.repeat) {
-        //         // key is being held down
-        //     } else {
-        //         // key is being pressed
-        //     }
-        // });
-        // document.onkeydown = function(e){
-        //     var keycode = window.event ? window.event.keyCode : e.which;
-        //     if(keycode == 40){
-        //         var timer = setTimeout(function(){
-        //             alert('Down key held');
-        //             document.onkeyup = function(){};
-        //         }, 200);
-        //         document.onkeyup = function(){
-        //             clearTimeout(timer);
-        //             alert('Down key pressed');
-        //         }
-        //     }
-        // };
     }
 
     make_control_panel() {
@@ -371,8 +339,10 @@ export class main_game extends Scene {
         this.key_triggered_button("Go Right [→]", ["ArrowRight"], () => {
             this.check_key_pressed('R');
         });
-        
-        //this.key_triggered_button("Boat view", ["b"], () => this.attached = () => this.initial_camera_location);
+
+        this.key_triggered_button("Play Game", ["p"], () => {
+            this.startGame = true;
+        })
     }
     
 
@@ -382,6 +352,7 @@ export class main_game extends Scene {
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
             program_state.set_camera(this.initial_camera_location);
+            this.firstRound = true;
         }
 
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, .1, 1000);
@@ -412,15 +383,11 @@ export class main_game extends Scene {
         this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))),
             this.materials.sky.override({color: color(0.451*(abs_cycle) + 0.984*(1-abs_cycle), 0.761*(abs_cycle) + 0.812*(1-abs_cycle), 0.984*(abs_cycle) + 0.404*(1-abs_cycle), 1), ambient: cycle_sky}));
 
-
+        // original algorithm for iceberg spawning
         // use modulus to make planets cycle back to initial position after 2, 3, 4 seconds
-        // TODO: if we want to make it faster as time goes, then keep a counter over time and decrease the number we divide this.t by!
-        // TODO: also, to make it more realistic, the shapes should be increasing in size as they approach us, so we should figure that out! should also apply to the mountains :3
-        // TODO: also also, maybe randomize the x position to draw, store the past location in an array or something
-//         this.planet1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%2)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
-//         this.planet2 = model_transform.times(Mat4.translation(-12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
-//         this.planet3 = model_transform.times(Mat4.translation(12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
-
+//         this.iceberg1 = model_transform.times(Mat4.translation(0, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%2)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
+//         this.iceberg2 = model_transform.times(Mat4.translation(-12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%3 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
+//         this.iceberg3 = model_transform.times(Mat4.translation(12, 0, -60)).times(Mat4.translation(0, 0, (this.t/3%4 - 1)*75 - 50)).times(Mat4.scale(3, 6, 1.5));
 
        //NOTE: THIS.A MUST STAY ABOVE 0
         let time1 = ((this.t/this.a)%2)*75;
@@ -430,45 +397,54 @@ export class main_game extends Scene {
         if (time1 >= 130) 
         {
              this.x = (getRandomInt(-10,10));
-             if (this.first_fast) {
-                 this.a1 /= 1.5;
-                 this.first_fast = false;
-             }
+             this.angle1 = (getRandomInt(0, 10));
         }
         if (time2 >= 130)
         {
             this.x2 = (getRandomInt(-10,10));
-            if (this.second_fast) {
-                this.a2 /= 1.5;
-                this.second_fast = false;
-            }
+            this.angle2 = (getRandomInt(0, 10));
         }
         if (time3 >= 130)
         {
             this.x3 = (getRandomInt(-10,10));
-            if (this.third_fast) {
-                this.a3 /= 1.5;
-                this.third_fast = false;
-            }
+            this.angle3 = (getRandomInt(0, 10));
         }
 
         if (this.alive) {
-            this.planet1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(5, 7, 5));
-            this.planet2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(5.5, 7.5, 5.5));
-            this.planet3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(4, 6, 4));
+            this.iceberg1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(2, 4, 5)).times(Mat4.rotation(this.angle1, 1, 0, 0));
+            this.iceberg2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(3, 5, 5.5)).times(Mat4.rotation(this.angle2, 1, 0, 0));
+            this.iceberg3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(3, 6, 4)).times(Mat4.rotation(this.angle3, 1, 0, 0))
         }
-        
-        let planet1z = time1 - 50;
-        let planet2z = time2 - 50;
-        let planet3z = time3 - 50;
+
+        if (this.startGame) {
+            this.firstRound = false;
+            //set score to 0
+            this.pre_points = 0;
+            //reset icebergs
+            program_state.animation_time = 0;
+            //put boat at center
+            this.pre_position = 0;
+            this.pre_position_y = 0;
+            this.alive = true;
+            //reset boat movement
+            this.RIGHT = false;
+            this.LEFT = false;
+            //put initial text again
+            this.startGame = false;
+            this.new_highscore = false;
+            this.a = 3;
+        }
+
+        let iceberg1z = time1 - 50;
+        let iceberg2z = time2 - 50;
+        let iceberg3z = time3 - 50;
 
        // collision detection
 
        if (this.alive) {
-            if ((Math.abs(planet1z - 57) < 3 && Math.abs(this.pre_position - this.x) < 6) || (Math.abs(planet2z - 57) < 3 && Math.abs(this.pre_position - this.x2) < 6) || (Math.abs(planet3z - 57) < 3 && Math.abs(this.pre_position - this.x3) < 6)) {  
+            if ((Math.abs(iceberg1z - 57) < 6 && Math.abs(this.pre_position - this.x) < 5) || (Math.abs(iceberg2z - 57) < 6 && Math.abs(this.pre_position - this.x2) < 5) || (Math.abs(iceberg3z - 57) < 6 && Math.abs(this.pre_position - this.x3) < 5)) {  
                 this.alive = false;
             }
-
        }
 
         this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2));
@@ -482,8 +458,6 @@ export class main_game extends Scene {
         else {
             this.turn_boat();
         }
-
-        // this.shapes.axis.draw(context, program_state, model_transform, this.materials.texture2);
 
         this.display_scene(context, program_state);
         const p = this.t + 4;
@@ -517,47 +491,53 @@ export class main_game extends Scene {
         this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
 
         let points = this.pre_points;
+        let highscore = this.pre_highscore;
 
-        this.shapes.planet3.draw(context, program_state, this.planet1, this.materials.ice);
-        this.shapes.planet3.draw(context, program_state, this.planet2, this.materials.ice);
-        this.shapes.planet3.draw(context, program_state, this.planet3, this.materials.ice);
+        this.shapes.iceberg.draw(context, program_state, this.iceberg1, this.materials.ice);
+        this.shapes.iceberg.draw(context, program_state, this.iceberg2, this.materials.ice);
+        this.shapes.iceberg.draw(context, program_state, this.iceberg3, this.materials.ice);
 
 
         if (this.alive) { // Only increment points while player is alive
-            points++;
+            points += 10;
+            if (points > highscore) {
+                highscore = points;
+                this.new_highscore = true;
+            }
         } else { // Game over screen upon losing
             this.shapes.text.set_string("GAME", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
             this.shapes.text.set_string("OVER", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
+            this.shapes.text.set_string("Press P to try again", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 3, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+            if (this.new_highscore) {
+                this.shapes.text.set_string("*NEW HIGHSCORE!*", context.context);
+                this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-3.5, 2, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+            }
         }
 
-       this.pre_points = points;
-
-//         if (this.attached) {
-//             if (this.attached() == this.initial_camera_location)
-//                 program_state.set_camera(this.initial_camera_location);
-//         }
-
         this.pre_points = points;
+        this.pre_highscore = highscore;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
-        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10, 11, 0)).times(Mat4.scale(0.5, 0.5, 0.5)), this.materials.text_image);
-        if (points%50.0 == 0)
+        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 11.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+        this.shapes.text.set_string("HIGHSCORE: " + highscore.toString(), context.context);
+        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 10.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+
+        if (points%20 == 0)
         {
-            this.a = this.a/1.001;
-            // this.first_fast = true;
-            // this.second_fast = true;
-            // this.third_fast = true;
+             this.a = this.a/1.001;
         }
 
 
         // beginning game dialogue
-        if (this.t < 3) {
+        if (this.t < 3 && this.firstRound) {
+            //this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.logo);
             this.shapes.text.set_string("OH NO! OBSTACLES SPOTTED AHEAD!", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
-        } else if (this.t < 7) {
-            this.shapes.text.set_string("STEER THE BOAT TO SAFETY!", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-3.5, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
+        } else if (this.t < 7 && this.firstRound) {
+            this.shapes.text.set_string("STEER THIS BOAT TO SAFETY!", context.context);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
         } else {
             if (this.size_count < 0.17) {
                 this.size_count += 0.01
