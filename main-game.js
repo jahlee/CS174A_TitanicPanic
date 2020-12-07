@@ -467,6 +467,7 @@ export class main_game extends Scene {
             program_state.animation_time = 0;
             //put boat at center
             this.pre_position = 0;
+            this.pre_position_y = 0;
             this.alive = true;
             //reset boat movement
             this.RIGHT = false;
