@@ -458,9 +458,9 @@ export class main_game extends Scene {
         
 
         if (this.alive) {
-            this.iceberg1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(3, 5, 5)).times(Mat4.rotation(this.angle1, 1, 0, 0));
-            this.iceberg2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(5, 7, 5.5)).times(Mat4.rotation(this.angle2, 1, 0, 0));
-            this.iceberg3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(4, 6, 4)).times(Mat4.rotation(this.angle3, 1, 0, 0))
+            this.iceberg1 = model_transform.times(Mat4.translation(this.x, 0, -60)).times(Mat4.translation(0, 0, time1-50)).times(Mat4.scale(2, 4, 5)).times(Mat4.rotation(this.angle1, 1, 0, 0));
+            this.iceberg2 = model_transform.times(Mat4.translation(this.x2, 0, -60)).times(Mat4.translation(0, 0, time2-50)).times(Mat4.scale(3, 5, 5.5)).times(Mat4.rotation(this.angle2, 1, 0, 0));
+            this.iceberg3 = model_transform.times(Mat4.translation(this.x3, 0, -60)).times(Mat4.translation(0, 0, time3-50)).times(Mat4.scale(3, 6, 4)).times(Mat4.rotation(this.angle3, 1, 0, 0))
         }
 
         if (this.startGame) {
@@ -489,7 +489,7 @@ export class main_game extends Scene {
        // collision detection
 
        if (this.alive) {
-            if ((Math.abs(iceberg1z - 57) < 5 && Math.abs(this.pre_position - this.x) < 5) || (Math.abs(iceberg2z - 57) < 5 && Math.abs(this.pre_position - this.x2) < 5) || (Math.abs(iceberg3z - 57) < 5 && Math.abs(this.pre_position - this.x3) < 5)) {  
+            if ((Math.abs(iceberg1z - 57) < 6 && Math.abs(this.pre_position - this.x) < 5) || (Math.abs(iceberg2z - 57) < 6 && Math.abs(this.pre_position - this.x2) < 5) || (Math.abs(iceberg3z - 57) < 6 && Math.abs(this.pre_position - this.x3) < 5)) {  
                 this.alive = false;
             }
        }
@@ -571,7 +571,7 @@ export class main_game extends Scene {
         this.shapes.text.set_string("HIGHSCORE: " + highscore.toString(), context.context);
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 10.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
 
-        if (points%10 == 0)
+        if (points%20 == 0)
         {
              this.a = this.a/1.001;
 
