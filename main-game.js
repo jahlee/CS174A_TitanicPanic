@@ -48,7 +48,6 @@ export class main_game extends Scene {
             water: new defs.Grid_Patch(20, 20, row_operation, column_operation),
             back: new defs.Grid_Patch(9, 4, row_operation2, column_operation2),
             mountain: new Shape_From_File("./assets/everest.obj"),
-            mtn: new Shape_From_File("./assets/lowpolymountains.obj"),
             cube: new Cube(),
             boat2: new Shape_From_File("./assets/boat2.obj"),
             text: new Text_Line(45),
@@ -58,45 +57,21 @@ export class main_game extends Scene {
         this.materials = {
             ice: new Material(new defs.Phong_Shader(),
                 {ambient: 0.9, diffusivity: 2, specularity: 0.5, color: hex_color("#87ceeb")}),
-            water: new Material(new defs.Phong_Shader(), {
-                ambient: 0.1, diffusivity: 1, specularity: 0, color: color(0.05, 0.05, 1, 0.875)}),
-            old_water: new Material(new defs.Phong_Shader(),
-                {ambient: 0, diffusivity: 1, specularity: 1, color: hex_color("#2a50B0")}),
-            bumps: new Material(new defs.Fake_Bump_Map(1),
-                {color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/stars.png")}),
             sky: new Material(new defs.Phong_Shader(),
                 {ambient: 0.9, diffusivity: 1, specularity: 0.5, color: hex_color("#87ceeb")}),
-            night_sky: new Material(new defs.Phong_Shader(),
-                {ambient: 0.9, diffusivity: 0, specularity: 0, color: hex_color("#000000")}),
             sun: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 0.3, specularity: 0, color: hex_color("#ec544c")}), // same as color(0.925,0.329,0.298,1)
             moon: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 0.3, specularity: 0, color: hex_color("#F0E68C")}),
             mountain : new Material(new defs.Fake_Bump_Map(1), {
-                color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/texture_map.png")}),
-            texture2: new Material(new Texture_Scroll_Water(), {
-                color: hex_color("#111111"),
-                ambient: .5, diffusivity: 0.3, specularity: 0.3,
-                texture: new Texture("assets/oc.jpg")
-            }),
-            texture1: new Material(new Texture_Rotate(), {
-                color: hex_color("#111111"),
-                ambient: .5, diffusivity: 0.3, specularity: 0.3,
-                texture: new Texture("assets/oc.jpg")
-            }),
-            boat2_fn: new Material(new defs.Fake_Bump_Map(1), {
-                color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/Normal.png")}),
+                color: color(0.7,0.7,0.7, 1), ambient: .3, diffusivity: 1, specularity: .5, texture: new Texture("./assets/texture_map.png")}),
             boat2_fm: new Material(new defs.Fake_Bump_Map(1), {
-                color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/MetalSmooth.png")}),
+                color: color(0.5,0.5,0.5,1), ambient: .5, diffusivity: 2, specularity: 0, texture: new Texture("./assets/MetalSmooth.png")}),
             boat2_fa: new Material(new defs.Fake_Bump_Map(1), {
-                color: color(.5, .5, .5, 1), ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("./assets/AlbedoTpy.png")}),
+                color: color(0.2,0.2,0.2, 1), ambient: 0.3, diffusivity: 1, specularity: 0, texture: new Texture("./assets/AlbedoTpy.png")}),
             text_image: new Material(new defs.Textured_Phong(1), {ambient: 1, diffusivity: 0, specularity: 0, texture: new Texture("assets/text.png")}),
-            // back_water: new Material(new defs.Phong_Shader(), {ambient: 1, diffusivity: 1, specularity: 1, texture: new Texture("assets/ocean_swish.jpg")}),
-            back_water: new Material(new Texture_Scroll_Water(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.2, color: color(0.3,0.3,0.8,0.2), texture: new Texture("assets/oc.jpg")}),
-            // back_water2: new Material(new Texture_Rotate(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0.3,0.3,0.8,0.2), texture: new Texture("assets/oc.jpg")}),
-            back_water2: new Material(new Texture_Scroll_Back_Water(), {ambient: 0.65, diffusivity: 1, specularity: 1, color: color(0.3,0.3,0.8,1), texture: new Texture("assets/oc.jpg")}),
-            // back_water3: new Material(new defs.Textured_Phong(1), {ambient: 0.8, diffusivity: 1, specularity: 0.7, color: color(0.3,0.3,0.8,0.2), texture: new Texture("assets/oc.jpg")}),
-            cartoon: new Material(new defs.Textured_Phong(1), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0,0,1,0.7), texture: new Texture("assets/cartoonsea.png")}),
+            // back_water: new Material(new Texture_Scroll_Back_Water(), {ambient: 0.65, diffusivity: 0, specularity: 0, color: color(0.15,0.15,0.6,1), texture: new Texture("assets/oc.jpg")}),
+            back_water: new Material(new Texture_Scroll_Back_Water(), {ambient: 0.65, diffusivity: 0, specularity: 0, color: color(0.8,0.6,0.8,1)}),
             movecartoon: new Material(new Texture_Scroll_Water(), {ambient: 0.2, diffusivity: 2.5, specularity: 0.35, color: color(0.1,0.15,0.9,1), texture: new Texture("assets/cartoonsea.png")}),  //hex_color("#00002A")
             rotatecartoon: new Material(new Texture_Rotate(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0,0,1,0.7), texture: new Texture("assets/cartoonsea.png")})
         };
@@ -114,29 +89,24 @@ export class main_game extends Scene {
         this.stopL = this.stopR = true;
         this.pre_highscore = 0;
         this.new_highscore = false;
-
         this.rmountain1 = this.rmountain2 = this.rmountain3 = this.rmountain4 = this.lmountain1 = this.lmountain2 = this.lmountain3 = this.lmountain4 = Mat4.identity();
-
+        this.boat_texture = 0;
+        this.environment = 0;
     }
 
     display_water(context, program_state) {
-        const random = (x) => Math.sin(1000 * x + program_state.animation_time / 1000);
-
+        const random = (x) => Math.sin(1000 * x + this.t);
         // Draw the sheets, flipped 180 degrees so their normals point at us.
         const r = Mat4.rotation(Math.PI, 0, 1, 0).times(Mat4.rotation(Math.PI/2, 1, 0, 0));
-        // AFTER ROTATION, +x is LEFT, + y is INTO THE SCREEN, +z is DOWN
 
-        // p[0] and p[1] are the amt of horizontal and vertical value of plane, p[2] is for z direction
-        // the 1.75*random determines the height at that point
+        // AFTER ROTATION, +x is LEFT, + y is INTO THE SCREEN, +z is DOWN
+        // p[0] and p[1] are the amt of horizontal and vertical value of plane, p[2] is for z direction, the 1.75*random determines the height at that point
         this.shapes.water.arrays.position.forEach((p, i, a) =>
             a[i] = vec3(p[0], p[1], 1.75*Math.sin(random(i/a.length))));
 
-        // Draw the current sheet shape.
-        // translation here specifies bottom right corner
+        // Draw the current sheet shape, translation specifies bottom right corner
         this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.movecartoon);
-         // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.rotatecartoon);
-        // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.cartoon);
-        // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.water);
+        // this.shapes.water.draw(context, program_state, Mat4.translation(45, 0, 35).times(r).times(Mat4.scale(22.5,37.5,1)), this.materials.rotatecartoon);
 
         // Update the gpu-side shape with new vertices.
         this.shapes.water.copy_onto_graphics_card(context.context, ["position", "normal"], false);
@@ -146,13 +116,10 @@ export class main_game extends Scene {
             a[i] = vec3(p[0], p[1], 0.25*Math.sin(random(i/a.length))));
 
         // +x is LEFT, + y is INTO THE SCREEN, +z is DOWN
-
-        if (this.alive) { // ONLY LET THE PLAYER MOVE IF THEY ARE STILL ALIVE
-            let middle = this.boat2.times(r).times(Mat4.translation(-0.5,0,1)).times(Mat4.scale(2,10,1));
-            context.context.disable(context.context.DEPTH_TEST);
-            this.shapes.back.draw(context, program_state, middle, this.materials.back_water2);
-            context.context.enable(context.context.DEPTH_TEST);
-        }
+        let middle = this.boat2.times(r).times(Mat4.translation(-0.5,0,1)).times(Mat4.scale(2,10,1));
+        context.context.disable(context.context.DEPTH_TEST);
+        this.shapes.back.draw(context, program_state, middle, this.materials.back_water);
+        context.context.enable(context.context.DEPTH_TEST);
 
     }
 
@@ -247,20 +214,6 @@ export class main_game extends Scene {
                 this.boat2 = this.boat2.times(Mat4.rotation(degree * Math.PI/10, 0, -1, 1));
             }
 
-            // if (this.RIGHT) {
-            //     this.vel += 0.0075;
-            //     this.boat2 = this.boat2.times(Mat4.rotation(-Math.PI/8, 0, -0.5, 1));
-            // }
-            // else if (this.LEFT) {
-            //     this.vel -= 0.0075;
-            //     this.boat2 = this.boat2.times(Mat4.rotation(Math.PI/8, 0, -0.5, 1));
-            // }
-            // else if (this.stopL) {
-            //     this.vel = Math.min(this.vel + 0.010, 0);
-            // }
-            // else if (this.stopR) {
-            //     this.vel = Math.max(this.vel - 0.010, 0);
-            // }
             this.pre_position += this.vel;
             if (this.pre_position > 10) {
                 this.pre_position = 10;
@@ -301,13 +254,27 @@ export class main_game extends Scene {
         this.cam.style["font-weight"] = "bold";
         this.cam.textContent = "Camera Settings";
 
-
         this.key_triggered_button("Change Camera Angle", ["c"], () => {
             this.cam_pos ^= 1;
         });
         this.key_triggered_button("Toggle Locked Camera", ["t"], () => {
             this.not_locked ^= 1;
         });
+
+        this.new_line();
+
+        this.cam = this.control_panel.appendChild(document.createElement("div"));
+        this.cam.style.fontSize = "16px";
+        this.cam.style["font-weight"] = "bold";
+        this.cam.textContent = "Display Settings";
+
+        this.key_triggered_button("Change Boat Texture", ["Shift", "A"], () => {
+            this.boat_texture += 1;
+        });
+        this.key_triggered_button("Change Environment", ["Shift", "S"], () => {
+            this.environment += 1;
+        });
+
     }
     
 
@@ -330,14 +297,30 @@ export class main_game extends Scene {
         let hour = this.t;
         let cycle = Math.cos(hour * Math.PI / 30);
         let abs_cycle = Math.abs(cycle);
+
+        // default: day and night
+        switch (this.environment % 4) {
+            case 1:     // day only
+                cycle = abs_cycle = 1;
+                break;
+            case 2:     // sunset only
+                cycle = abs_cycle = 0.175;
+                break;
+            case 3:     // night only
+                cycle = -1;
+                abs_cycle = 1;
+                break;
+        }
+
         let main_light = (15**3) * abs_cycle;
         let boat_light = main_light / 10;
         let close_light_y = 20;
         let close_light_z = 0;
         let close_color = color(0.3, 0.3, 0.3, 1);
         let main_color = color(1,1,1,1);
+
         // when its sunset/sunrise/night-time
-        if (cycle < 0.25) {
+        if (cycle <= 0.175) {
             main_light /= 10;
             boat_light = 10;
             close_light_y = this.pre_position_y + 5;
@@ -469,7 +452,17 @@ export class main_game extends Scene {
         this.rock_the_boat();
 
         context.context.disable(context.context.DEPTH_TEST);
-        this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
+        switch (this.boat_texture % 3) {
+            case 0:
+                this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
+                break;
+            case 1:
+                this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fm);
+                break;
+            case 2:
+                this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fm.override({color: color(Math.random(), Math.random(), Math.random(), 1)}));
+                break;
+        }
         context.context.enable(context.context.DEPTH_TEST);
 
         let points = this.pre_points;
