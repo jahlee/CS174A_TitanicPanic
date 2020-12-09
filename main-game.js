@@ -228,9 +228,20 @@ export class main_game extends Scene {
 
     make_control_panel() {
         // check the left and right functions elsewhere, keep it here so you can technically press it on the website too
+        this.set_boat = this.control_panel.appendChild(document.createElement("span"));
+        this.set_boat.style.fontSize = "13px";
+        this.set_boat.style["font-weight"] = "bold";
+
+        this.break = this.control_panel.appendChild(document.createElement("span"));
+        this.break.style.fontSize = "13px";
+        this.break.textContent = " | ";
+
+        this.set_env = this.control_panel.appendChild(document.createElement("span"));
+        this.set_env.style.fontSize = "13px";
+        this.set_env.style["font-weight"] = "bold";
 
         this.controls = this.control_panel.appendChild(document.createElement("div"));
-        this.controls.style.fontSize = "16px";
+        this.controls.style.fontSize = "15px";
         this.controls.style["font-weight"] = "bold";
         this.controls.textContent = "Controls";
 
@@ -250,7 +261,7 @@ export class main_game extends Scene {
         this.new_line();
 
         this.cam = this.control_panel.appendChild(document.createElement("div"));
-        this.cam.style.fontSize = "16px";
+        this.cam.style.fontSize = "15px";
         this.cam.style["font-weight"] = "bold";
         this.cam.textContent = "Camera Settings";
 
@@ -263,17 +274,19 @@ export class main_game extends Scene {
 
         this.new_line();
 
-        this.cam = this.control_panel.appendChild(document.createElement("div"));
-        this.cam.style.fontSize = "16px";
-        this.cam.style["font-weight"] = "bold";
-        this.cam.textContent = "Display Settings";
+        this.set = this.control_panel.appendChild(document.createElement("div"));
+        this.set.style.fontSize = "15px";
+        this.set.style["font-weight"] = "bold";
+        this.set.textContent = "Display Settings";
 
-        this.key_triggered_button("Change Boat Texture", ["Shift", "A"], () => {
+        this.key_triggered_button("Change Boat Texture", ["Shift", "Q"], () => {
             this.boat_texture += 1;
         });
-        this.key_triggered_button("Change Environment", ["Shift", "S"], () => {
+        this.key_triggered_button("Change Environment", ["Shift", "W"], () => {
             this.environment += 1;
         });
+
+        this.new_line();
 
     }
     
@@ -302,14 +315,23 @@ export class main_game extends Scene {
         switch (this.environment % 4) {
             case 1:     // day only
                 cycle = abs_cycle = 1;
+                this.set_env.textContent = "Environment: Day only";
+                this.set_env.style.background = "yellow";
                 break;
             case 2:     // sunset only
                 cycle = abs_cycle = 0.175;
+                this.set_env.textContent = "Environment: Sunset only";
+                this.set_env.style.background = "orangered";
                 break;
             case 3:     // night only
                 cycle = -1;
                 abs_cycle = 1;
+                this.set_env.textContent = "Environment: Night only";
+                this.set_env.style.background = "gray";
                 break;
+            default:
+                this.set_env.textContent = "Environment: Day and night";
+                this.set_env.style.background = "white";
         }
 
         let main_light = (15**3) * abs_cycle;
@@ -455,12 +477,18 @@ export class main_game extends Scene {
         switch (this.boat_texture % 3) {
             case 0:
                 this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
+                this.set_boat.textContent = "Boat: Original";
+                this.set_boat.style.color = "red";
                 break;
             case 1:
                 this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fm);
+                this.set_boat.textContent = "Boat: Ghost";
+                this.set_boat.style.color = "gray";
                 break;
             case 2:
                 this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fm.override({color: color(Math.random(), Math.random(), Math.random(), 1)}));
+                this.set_boat.textContent = "Boat: Disco";
+                this.set_boat.style.color = "cyan";
                 break;
         }
         context.context.enable(context.context.DEPTH_TEST);
