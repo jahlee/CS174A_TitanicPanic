@@ -346,7 +346,7 @@ export class main_game extends Scene {
             main_light /= 10;
             boat_light = 10;
             close_light_y = this.pre_position_y + 5;
-            close_light_z = -10;
+            close_light_z = -13;
             close_color = color(1,1,1,1);
             main_color = color(0.7, 0.7, 0.7, 1);
         }
@@ -360,8 +360,10 @@ export class main_game extends Scene {
         let moon_transform = model_transform.times(Mat4.translation(0,-30*cycle - 5,-105)).times(Mat4.scale(3.5 + cycle_scale2, 3.5 + cycle_scale2, 3.5 + cycle_scale2));
 
         // day-time (sun)
-        this.shapes.sphere.draw(context, program_state, sun_transform, this.materials.sun.override({color: color(0.941*(cycle) + 0.992*(1-cycle), 0.902*(cycle) + 0.500*(1-cycle), 0.549*(cycle) + 0.369*(1-cycle), 1)}));
-        this.shapes.moon.draw(context, program_state, moon_transform, this.materials.moon);
+        if (cycle > 0)
+            this.shapes.sphere.draw(context, program_state, sun_transform, this.materials.sun.override({color: color(0.941*(cycle) + 0.992*(1-cycle), 0.902*(cycle) + 0.500*(1-cycle), 0.549*(cycle) + 0.369*(1-cycle), 1)}));
+        else
+            this.shapes.moon.draw(context, program_state, moon_transform, this.materials.moon);
 
         // outside lighting/color
         let cycle_sky = Math.max(cycle, 0);
