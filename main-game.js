@@ -464,19 +464,19 @@ export class main_game extends Scene {
             this.lmountain3 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0))));
             this.lmountain4 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0))));
 
-            this.clouds1 = model_transform.times(Mat4.translation(-10, 12, 0)).times(Mat4.translation(0, 0, (((this.t/40)%2)*75)-50));
-            this.clouds2 = model_transform.times(Mat4.translation(8, 30, (((this.t/40)%2)*75)-50))
-            this.clouds3 = model_transform.times(Mat4.translation(0, 20, 0)).times(Mat4.translation(0, 0, (((this.t/40)%2)*75)-50))
-            this.clouds4 = model_transform.times(Mat4.translation(-15, 10, 0)).times(Mat4.translation(0, 0, (((this.t/40)%2)*75)-50))
-            this.clouds5 = model_transform.times(Mat4.translation(6, 20, (((this.t/40)%2)*75)-50))
-            this.clouds6 = model_transform.times(Mat4.translation(-10, 14, 0)).times(Mat4.translation(0, 0, (((this.t/40)%2)*75)-50)).times(Mat4.scale(1.5, 1.5, 0))
-            this.clouds7 = model_transform.times(Mat4.translation(-15, 25, 0)).times(Mat4.translation(0, 0, (((this.t/40)%2)*75)-50)).times(Mat4.scale(1.5, 1.5, 0))
-            this.clouds8 = model_transform.times(Mat4.translation(-18, 14,0)).times(Mat4.translation(0, 0, (((this.t/40)%2)*75)-50))
-            this.clouds9 = model_transform.times(Mat4.translation(-20, 18, 0)).times(Mat4.translation(0, 0, (((this.t/40)%2)*75)-50))
-            this.clouds10 = model_transform.times(Mat4.translation(10, 16, -1 * (16 - this.t%30.0)))
-            this.clouds11 = model_transform.times(Mat4.translation(12, 14, 0)).times(Mat4.translation(0, 0, (((this.t/40)%2)*75)-50)).times(Mat4.scale(1.5, 1.5, 0))
-            this.clouds12 = model_transform.times(Mat4.translation(-15, 14, 0)).times(Mat4.translation(0, 0, (((this.t/40)%2)*75)-50)).times(Mat4.scale(1.5, 1.5, 0))
-            this.clouds13 = model_transform.times(Mat4.translation(-18, 14, 0)).times(Mat4.translation(0, 0, (((this.t/40)%2)*75)-50))
+            this.clouds1 = model_transform.times(Mat4.translation(0, 20, -60)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50));
+            this.clouds2 = model_transform.times(Mat4.translation(-5, 15, 0)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50));
+            this.clouds3 = model_transform.times(Mat4.translation(-10, 11, -40)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50));
+            this.clouds4 = model_transform.times(Mat4.translation(15, 14, -50)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50));
+            this.clouds5 = model_transform.times(Mat4.translation(-25, 20, -60)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50));
+            this.clouds6 = model_transform.times(Mat4.translation(19, 20, 0)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(1.5, 1.5, 0))
+            this.clouds7 = model_transform.times(Mat4.translation(17, 19, -60)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(1.5, 1.5, 0))
+            this.clouds8 = model_transform.times(Mat4.translation(-20, 12, -60)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50));
+            this.clouds9 = model_transform.times(Mat4.translation(-8, 11, -40)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50));
+            this.clouds10 = model_transform.times(Mat4.translation(-26, 22, -30)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50));
+            this.clouds11 = model_transform.times(Mat4.translation(25, 12, -20)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(1.5, 1.5, 0))
+            this.clouds12 = model_transform.times(Mat4.translation(9, 15, -10)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(1.5, 1.5, 0))
+            this.clouds13 = model_transform.times(Mat4.translation(-4, 10, 10)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50));
         }
 
         // right mountains
