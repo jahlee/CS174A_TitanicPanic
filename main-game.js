@@ -83,7 +83,7 @@ export class main_game extends Scene {
         this.initial_camera_location = Mat4.look_at(vec3(0, 6, 15), vec3(0, 6, 0), vec3(0, 1, 0));
         this.pre_points = 0;
         this.pre_position = 0; // boat's x position
-        this.pre_position_y = 0;
+        this.pre_position_y = 0; // boat's y position
         this.alive = true;
         this.a = 3;
         this.size_count = 0;
@@ -196,7 +196,7 @@ export class main_game extends Scene {
         if (this.alive) { // ONLY LET USER DO KEY CONTROLS IF THE PLAYER IS STILL ALIVE
 
             this.boat2 = Mat4.identity().times(Mat4.scale(1,1,-1))
-                .times(Mat4.translation(0.1,1.75,2))
+                .times(Mat4.translation(0.1,0,2))
                 .times(Mat4.translation(this.pre_position, 0, 0));
 
             let degree = -this.vel/0.25;
@@ -431,14 +431,27 @@ export class main_game extends Scene {
 
        // collision detection
        if (this.alive) {
-            if ((Math.abs(iceberg1z - 57) < 3 && Math.abs(this.pre_position - this.x) < 3) || (Math.abs(iceberg2z - 57) < 3 && Math.abs(this.pre_position - this.x2) < 3) || (Math.abs(iceberg3z - 57) < 3 && Math.abs(this.pre_position - this.x3) < 3)) {  
-                this.alive = false;
-            }
+
+              // iceberg 1
+              if ((Math.abs(iceberg1z - 55) < 3 && Math.abs(this.pre_position - this.x) < 3)) {
+                  this.alive = false;
+              }
+              
+              // iceberg 2
+              if ((Math.abs(iceberg2z - 55) < 3 && Math.abs(this.pre_position - this.x2) < 4)) {
+                  this.alive = false;
+              }
+
+              // iceberg 3
+              if ((Math.abs(iceberg3z - 55) < 3 && Math.abs(this.pre_position - this.x3) < 4)) {
+                  this.alive = false;
+              }
        }
 
-        this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.75,2));
+        this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,0,2));
         this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, this.pre_position_y, 0));
 
+        // sinking the boat upon collision
         if (!this.alive) {
             if (this.pre_position_y > -5) {
                 this.pre_position_y -= 0.05;
