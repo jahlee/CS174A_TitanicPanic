@@ -498,19 +498,19 @@ export class main_game extends Scene {
 
 
             this.clouds1 = model_transform.times(Mat4.translation(0, 20, -60)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.85)*75-50));
-            this.clouds2 = model_transform.times(Mat4.translation(-50, 15, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.8)*75-50));
-            this.clouds3 = model_transform.times(Mat4.translation(-80, 15, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.75)*75-50));
-            this.clouds4 = model_transform.times(Mat4.translation(77, 14, 0)).times(Mat4.translation(0, 0, ((this.t/40)%0.65)*75-50)).times(Mat4.scale(2, 2, 2));
-            this.clouds5 = model_transform.times(Mat4.translation(-20, 20, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%1)*75-50));
-            this.clouds6 = model_transform.times(Mat4.translation(20, 10, -55)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.78)*75-50))
+            this.clouds2 = model_transform.times(Mat4.translation(-50, 15, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.5)*75-50));
+            this.clouds3 = model_transform.times(Mat4.translation(-80, 15, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.15)*75-50));
+            this.clouds4 = model_transform.times(Mat4.translation(30, 14, 0)).times(Mat4.translation(0, 0, ((this.t/40)%0.4)*75-50)).times(Mat4.scale(2, 2, 2));
+            this.clouds5 = model_transform.times(Mat4.translation(-20, 20, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.58)*75-50));
+            this.clouds6 = model_transform.times(Mat4.translation(20, 10, -55)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.91)*75-50))
             this.clouds7 = model_transform.times(Mat4.translation(44, 19, -10)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.5)*75-50))
-            this.clouds8 = model_transform.times(Mat4.translation(-30, 12, -20)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.52)*75-50));
-            this.clouds9 = model_transform.times(Mat4.translation(-80, 31, -40)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.40)*75-50));
-            this.clouds10 = model_transform.times(Mat4.translation(-25, 22, -30)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.45)*75-50));
-            this.clouds11 = model_transform.times(Mat4.translation(15, 12, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.53)*75-50))
-            this.clouds12 = model_transform.times(Mat4.translation(80, 40, -25)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.55)*75-50))
-            this.clouds13 = model_transform.times(Mat4.translation(-100, 39, -10)).times(Mat4.scale(5, 5, 5)).times(Mat4.translation(0, 0, ((this.t/40)%0.35)*75-50));
-            this.clouds14 = model_transform.times(Mat4.translation(50, 40, -50)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.7)*75-50));
+            this.clouds8 = model_transform.times(Mat4.translation(-30, 12, -20)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.7)*75-50));
+            this.clouds9 = model_transform.times(Mat4.translation(-80, 31, -40)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.37)*75-50));
+            this.clouds10 = model_transform.times(Mat4.translation(-25, 22, -30)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.75)*75-50));
+            this.clouds11 = model_transform.times(Mat4.translation(15, 12, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.82)*75-50))
+            this.clouds12 = model_transform.times(Mat4.translation(80, 40, -25)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.27)*75-50))
+            this.clouds13 = model_transform.times(Mat4.translation(-100, 39, -10)).times(Mat4.scale(5, 5, 5)).times(Mat4.translation(0, 0, ((this.t/40)%0.42)*75-50));
+            this.clouds14 = model_transform.times(Mat4.translation(50, 40, -50)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.65)*75-50));
 
 
            // .times(Mat4.translation(0, 0, ((this.t/20)%2)-50))
