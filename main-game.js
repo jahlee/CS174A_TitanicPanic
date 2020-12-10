@@ -55,8 +55,8 @@ export class main_game extends Scene {
         };
 
         //background music
-        this.audio = new Audio('assets/bgmusic.mp3');
-        this.audio.play();
+       // this.audio = new Audio('assets/bgmusic.mp3');
+        //this.audio.play();
         /*this.audio.loop = true;
         this.audio.volume = 0.5;
         const playPromise = this.audio.play().then(response => {
@@ -78,7 +78,7 @@ export class main_game extends Scene {
             mountain : new Material(new defs.Fake_Bump_Map(1), {
                 color: color(0.7,0.7,0.7, 1), ambient: .3, diffusivity: 1, specularity: .5, texture: new Texture("./assets/texture_map.png")}),
             clouds : new Material(new defs.Fake_Bump_Map(1),
-                {ambient: 0.74, diffusivity: 1, specularity: 0.5, color: hex_color("#E8E8E8"),texture: new Texture("./assets/texture_map.png")}),
+                {ambient: 1, diffusivity: 1, specularity: 0.5, color: hex_color("#909090"),texture: new Texture("./assets/texture_map.png")}),
             boat2_fm: new Material(new defs.Fake_Bump_Map(1), {
                 color: color(0.5,0.5,0.5,1), ambient: .5, diffusivity: 2, specularity: 0, texture: new Texture("./assets/MetalSmooth.png")}),
             boat2_fa: new Material(new defs.Fake_Bump_Map(1), {
@@ -494,19 +494,27 @@ export class main_game extends Scene {
             this.lmountain3 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0))));
             this.lmountain4 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0))));
 
-            this.clouds1 = model_transform.times(Mat4.translation(0, 20, -60)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2));
-            this.clouds2 = model_transform.times(Mat4.translation(-5, 15, 0)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2));
-            this.clouds3 = model_transform.times(Mat4.translation(-10, 11, -40)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2));
-            this.clouds4 = model_transform.times(Mat4.translation(15, 14, -50)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2));
-            this.clouds5 = model_transform.times(Mat4.translation(-25, 20, -60)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2));
-            this.clouds6 = model_transform.times(Mat4.translation(19, 20, 0)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2))
-            this.clouds7 = model_transform.times(Mat4.translation(37, 19, -60)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2))
-            this.clouds8 = model_transform.times(Mat4.translation(-30, 12, -60)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2));
-            this.clouds9 = model_transform.times(Mat4.translation(-8, 11, -40)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2));
-            this.clouds10 = model_transform.times(Mat4.translation(-32, 22, -30)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2));
-            this.clouds11 = model_transform.times(Mat4.translation(25, 12, -20)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2))
-            this.clouds12 = model_transform.times(Mat4.translation(9, 15, -10)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2))
-            this.clouds13 = model_transform.times(Mat4.translation(-4, 10, 10)).times(Mat4.translation(0, 0, ((this.t/20)%2)*75-50)).times(Mat4.scale(2, 2, 2));
+
+
+
+            this.clouds1 = model_transform.times(Mat4.translation(0, 20, -60)).times(Mat4.scale(2, 2, 2));
+            this.clouds2 = model_transform.times(Mat4.translation(-5, 15, -20)).times(Mat4.scale(2, 2, 2));
+            this.clouds3 = model_transform.times(Mat4.translation(-10, 15, -40)).times(Mat4.scale(2, 2, 2));
+            this.clouds4 = model_transform.times(Mat4.translation(15, 14, -50)).times(Mat4.translation(0, 0, ((this.t/20)%2)-50)).times(Mat4.scale(2, 2, 2));
+            this.clouds5 = model_transform.times(Mat4.translation(-24, 20, -60)).times(Mat4.scale(2, 2, 2));
+            this.clouds6 = model_transform.times(Mat4.translation(19, 10, -55)).times(Mat4.scale(2, 2, 2))
+            this.clouds7 = model_transform.times(Mat4.translation(23, 19, -60)).times(Mat4.scale(2, 2, 2))
+            this.clouds8 = model_transform.times(Mat4.translation(-20, 12, -70)).times(Mat4.scale(2, 2, 2));
+            this.clouds9 = model_transform.times(Mat4.translation(-15, 11, -40)).times(Mat4.scale(2, 2, 2));
+            this.clouds10 = model_transform.times(Mat4.translation(-25, 22, -30)).times(Mat4.scale(2, 2, 2));
+            this.clouds11 = model_transform.times(Mat4.translation(25, 12, -20)).times(Mat4.scale(2, 2, 2))
+            this.clouds12 = model_transform.times(Mat4.translation(12, 15, -15)).times(Mat4.scale(2, 2, 2))
+            this.clouds13 = model_transform.times(Mat4.translation(-20, 9, -20)).times(Mat4.scale(2, 2, 2));
+            this.clouds14 = model_transform.times(Mat4.translation(50, 14, -100)).times(Mat4.scale(4, 4, 4));
+
+
+           // .times(Mat4.translation(0, 0, ((this.t/20)%2)-50))
+
         }
 
         // right mountains
@@ -541,19 +549,21 @@ export class main_game extends Scene {
                 break;
         }
 
-        this.shapes.cloud.draw(context, program_state, this.clouds1, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds2, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds3, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds4, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds5, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds6, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds7, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds8, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds9, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds10, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds11, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds12, this.materials.clouds)
-        this.shapes.cloud.draw(context, program_state, this.clouds13, this.materials.clouds)
+        this.shapes.cloud.draw(context, program_state, this.clouds1, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds2, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds3, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds4, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds5, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds6, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds7, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds8, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds9, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds10, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds11, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds12, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds13, this.materials.clouds);
+        this.shapes.cloud.draw(context, program_state, this.clouds14, this.materials.clouds);
+
         context.context.enable(context.context.DEPTH_TEST);
 
         let points = this.pre_points;
