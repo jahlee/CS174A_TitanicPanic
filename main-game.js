@@ -62,7 +62,7 @@ export class main_game extends Scene {
             mid: new mid(this.num_particles2),
             smoke: new smoke(this.num_particles3),
             smoke_top: new smoke_top(this.num_particles4),
-            mountain2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2)
+            mountain2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
         };
 
         //background music
@@ -165,9 +165,9 @@ export class main_game extends Scene {
 
         // +x is LEFT, + y is INTO THE SCREEN, +z is DOWN
         let middle = this.boat2.times(r).times(Mat4.translation(-0.5,0,1)).times(Mat4.scale(2,12,1));
-        context.context.disable(context.context.DEPTH_TEST);
+        //context.context.disable(context.context.DEPTH_TEST);
         this.shapes.back.draw(context, program_state, middle, this.materials.back_water);
-        context.context.enable(context.context.DEPTH_TEST);
+        //context.context.enable(context.context.DEPTH_TEST);
 
     }
 
@@ -571,7 +571,7 @@ export class main_game extends Scene {
         if (this.alive)
             this.rock_the_boat();
 
-        context.context.disable(context.context.DEPTH_TEST);
+        //context.context.disable(context.context.DEPTH_TEST);
         switch (this.boat_texture % 3) {
             case 0:
                 this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
@@ -605,7 +605,7 @@ export class main_game extends Scene {
         this.shapes.cloud.draw(context, program_state, this.clouds13, this.materials.clouds);
         this.shapes.cloud.draw(context, program_state, this.clouds14, this.materials.clouds);
 
-        context.context.enable(context.context.DEPTH_TEST);
+        //context.context.enable(context.context.DEPTH_TEST);
 
         let points = this.pre_points;
         let highscore = this.pre_highscore;
@@ -662,25 +662,25 @@ export class main_game extends Scene {
 
         } else { // Game over screen upon losing
             this.shapes.text.set_string("GAME", context.context);
-            context.context.disable(context.context.DEPTH_TEST);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
+            //context.context.disable(context.context.DEPTH_TEST);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*5)/10+2)), this.materials.text_image);
             this.shapes.text.set_string("OVER", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*5)/10+2)), this.materials.text_image);
             this.shapes.text.set_string("Press P to try again", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 3, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
-            context.context.enable(context.context.DEPTH_TEST);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 3, -5 * Math.sin(this.t*5)/10+2)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+            //context.context.enable(context.context.DEPTH_TEST);
             if (this.new_highscore) {
                 this.shapes.text.set_string("*NEW HIGHSCORE!*", context.context);
-                this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-3.5, 2, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+                this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-3.5, 2, -5 * Math.sin(this.t*5)/10+2)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
             }
         }
 
         this.pre_points = points;
         this.pre_highscore = highscore;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
-        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 11.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-9, 10.8, 2)).times(Mat4.scale(0.25, 0.25, 0.3)), this.materials.text_image);
         this.shapes.text.set_string("HIGHSCORE: " + highscore.toString(), context.context);
-        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 10.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-9, 10.2, 2)).times(Mat4.scale(0.25, 0.25, 0.3)), this.materials.text_image);
 
         //speeding up the game (cap at this.a==2)
         if (points%50 == 0 && this.a >= 2)
