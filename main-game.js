@@ -40,6 +40,11 @@ export class main_game extends Scene {
             : initial_corner_point;
         const column_operation2 = (t, p) => Mat4.translation(0.15, 0, 0).times(p.to4(1)).to3();
 
+        this.num_particles = 10;
+        this.num_particles2 = 40;
+        this.num_particles3 = 256;
+        this.num_particles4 = 100;
+
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
             sphere: new defs.Subdivision_Sphere(4),
@@ -52,6 +57,10 @@ export class main_game extends Scene {
             cube: new Cube(),
             boat2: new Shape_From_File("./assets/boat2.obj"),
             text: new Text_Line(45),
+            base: new base(this.num_particles),
+            mid: new mid(this.num_particles2),
+            smoke: new smoke(this.num_particles3),
+            smoke_top: new smoke_top(this.num_particles4)
         };
 
         //background music
@@ -85,6 +94,14 @@ export class main_game extends Scene {
                 color: color(0.2,0.2,0.2, 1), ambient: 0.3, diffusivity: 1, specularity: 0, texture: new Texture("./assets/AlbedoTpy.png")}),
             text_image: new Material(new defs.Textured_Phong(1), {ambient: 1, diffusivity: 0, specularity: 0, texture: new Texture("assets/text.png")}),
             // back_water: new Material(new Texture_Scroll_Back_Water(), {ambient: 0.65, diffusivity: 0, specularity: 0, color: color(0.15,0.15,0.6,1), texture: new Texture("assets/oc.jpg")}),
+            particles: new Material(new PP_Fire_Base(), {
+                color: color(1.0,0.68,0.26,1), ambient: 0.6, diffusivity: 1, specularity: 1}),
+
+            particles2: new Material(new PP_Fire_Mid(), {
+                color: color(1.0,0.0,0.0,0.95), ambient: 0.6, diffusivity: 1, specularity: 1}),
+
+            particles3: new Material(new PP_Smoke(), {
+                color: color(0,0,0,0.8), ambient: 0.4, diffusivity: 0.1, specularity: 0.1}),
             back_water: new Material(new Texture_Scroll_Back_Water(), {ambient: 0.65, diffusivity: 0, specularity: 0, color: color(0.8,0.6,0.8,1)}),
             movecartoon: new Material(new Texture_Scroll_Water(), {ambient: 0.2, diffusivity: 2.5, specularity: 0.35, color: color(0.1,0.15,0.9,1), texture: new Texture("assets/cartoonsea.png")}),  //hex_color("#00002A")
             rotatecartoon: new Material(new Texture_Rotate(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0,0,1,0.7), texture: new Texture("assets/cartoonsea.png")})
@@ -138,7 +155,7 @@ export class main_game extends Scene {
             a[i] = vec3(p[0], p[1], 0.25*Math.sin(random(i/a.length))));
 
         // +x is LEFT, + y is INTO THE SCREEN, +z is DOWN
-        let middle = this.boat2.times(r).times(Mat4.translation(-0.5,0,1)).times(Mat4.scale(2,10,1));
+        let middle = this.boat2.times(r).times(Mat4.translation(-0.5,0,1)).times(Mat4.scale(2,12,1));
         context.context.disable(context.context.DEPTH_TEST);
         this.shapes.back.draw(context, program_state, middle, this.materials.back_water);
         context.context.enable(context.context.DEPTH_TEST);
@@ -220,19 +237,19 @@ export class main_game extends Scene {
 
             let degree = -this.vel/0.25;
             if (this.RIGHT) {
-                this.vel += 0.0075;
+                this.vel += 0.01;
                 this.boat2 = this.boat2.times(Mat4.rotation(degree * Math.PI/8, 0, -1, 1));
             }
             else if (this.LEFT) {
-                this.vel -= 0.0075;
+                this.vel -= 0.01;
                 this.boat2 = this.boat2.times(Mat4.rotation(degree * Math.PI/8, 0, -1, 1));
             }
             else if (this.stopL) {
-                this.vel = Math.min(this.vel + 0.010, 0);
+                this.vel = Math.min(this.vel + 0.015, 0);
                 this.boat2 = this.boat2.times(Mat4.rotation(degree * Math.PI/10, 0, -1, 1));
             }
             else if (this.stopR) {
-                this.vel = Math.max(this.vel - 0.010, 0);
+                this.vel = Math.max(this.vel - 0.015, 0);
                 this.boat2 = this.boat2.times(Mat4.rotation(degree * Math.PI/10, 0, -1, 1));
             }
 
@@ -520,7 +537,8 @@ export class main_game extends Scene {
         this.shapes.mountain.draw(context, program_state, this.lmountain3, this.materials.mountain);
         this.shapes.mountain.draw(context, program_state, this.lmountain4, this.materials.mountain);
 
-        this.rock_the_boat();
+        if (this.alive)
+            this.rock_the_boat();
 
         context.context.disable(context.context.DEPTH_TEST);
         switch (this.boat_texture % 3) {
@@ -594,7 +612,7 @@ export class main_game extends Scene {
                 this.messages.splice(i, 1);
 
                 if (this.messages.length == 0) {
-                    this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!"];
+                    this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!", "ASISH WOULD BE PROUD!", "A+ FOR YOU!"];
                 }
 
             }
@@ -671,6 +689,34 @@ export class main_game extends Scene {
             program_state.set_camera(Mat4.inverse(cam));
         }
 
+        if (!this.alive) {
+            const offsets = Array(this.num_particles).fill(0).map(x=>vec3(0,0.01,0).randomized(.05));
+            this.shapes.base.arrays.offset = this.shapes.base.arrays.offset.map((x, i)=> x.plus(offsets[Math.floor(i/4)]));
+            this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0,0,0)).times(Mat4.scale(1.2,1.2,1.2)), this.materials.particles);
+            this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0,1,0)).times(Mat4.scale(1,1,1)), this.materials.particles);
+            this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0,0.5,0)).times(Mat4.scale(1.4,1.4,1.4)), this.materials.particles);
+            this.shapes.base.copy_onto_graphics_card(context.context, ["offset"], false);
+
+            const offsets2 = Array(this.num_particles2).fill(0).map(x=>vec3(0,0.01,0).randomized(.05));
+            this.shapes.mid.arrays.offset = this.shapes.mid.arrays.offset.map((x, i)=> x.plus(offsets2[Math.floor(i/4)]));
+            this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(0,0.5,0)), this.materials.particles2);
+            this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(0,1.25,0)), this.materials.particles2);
+            this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(0,2,0)), this.materials.particles2);
+            this.shapes.mid.copy_onto_graphics_card(context.context, ["offset"], false);
+
+            const offsets3 = Array(this.num_particles3).fill(0).map(x=>vec3(0,0.01,0).randomized(.05));
+            this.shapes.smoke.arrays.offset = this.shapes.smoke.arrays.offset.map((x, i)=> x.plus(offsets3[Math.floor(i/4)]));
+            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(0,1.5,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke.copy_onto_graphics_card(context.context, ["offset"], false);
+
+            this.shapes.smoke_top.arrays.offset = this.shapes.smoke_top.arrays.offset.map((x, i)=> x.plus(offsets3[Math.floor(i/4)]));
+            this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(0,2,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(0,4,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(-2,5,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(2,5,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke_top.copy_onto_graphics_card(context.context, ["offset"], false);
+        }
+
       }
 }
 
@@ -743,3 +789,256 @@ class Texture_Rotate extends Textured_Phong {
         } `;
     }
 }
+
+const base = defs.base =
+    class base extends Shape {
+        // **Cube** A closed 3D shape, and the first example of a compound shape (a Shape constructed
+        // out of other Shapes).  A cube inserts six Square strips into its own arrays, using six
+        // different matrices as offsets for each square.
+        constructor(num_particles) {
+            super("position", "normal", "texture_coord", "offset");
+            // Loop 3 times (for each axis), and inside loop twice (for opposing cube sides):
+            for (let i = 0; i < num_particles; i++) {
+                defs.Square.insert_transformed_copy_into(this, [9], Mat4.identity());
+            }
+            const offsets = Array(num_particles).fill(0).map(x=>vec3(0,0,0).randomized(0.2));
+            this.arrays.offset = this.arrays.position.map((x, i)=> offsets[~~(i/4)]);
+        }
+    };
+
+const mid = defs.mid =
+    class mid extends Shape {
+        // **Cube** A closed 3D shape, and the first example of a compound shape (a Shape constructed
+        // out of other Shapes).  A cube inserts six Square strips into its own arrays, using six
+        // different matrices as offsets for each square.
+        constructor(num_particles) {
+            super("position", "normal", "texture_coord", "offset");
+            // Loop 3 times (for each axis), and inside loop twice (for opposing cube sides):
+            for (let i = 0; i < num_particles; i++) {
+                defs.Square.insert_transformed_copy_into(this, [9], Mat4.identity());
+            }
+            const offsets = Array(num_particles).fill(0).map(x=>vec3(0,0,0).randomized(2));
+            this.arrays.offset = this.arrays.position.map((x, i)=> offsets[~~(i/4)]);
+        }
+    };
+
+const smoke = defs.smoke =
+    class smoke extends Shape {
+        // **Cube** A closed 3D shape, and the first example of a compound shape (a Shape constructed
+        // out of other Shapes).  A cube inserts six Square strips into its own arrays, using six
+        // different matrices as offsets for each square.
+        constructor(num_particles) {
+            super("position", "normal", "texture_coord", "offset");
+            // Loop 3 times (for each axis), and inside loop twice (for opposing cube sides):
+            for (let i = 0; i < num_particles; i++) {
+                defs.Square.insert_transformed_copy_into(this, [9], Mat4.identity());
+            }
+            const offsets = Array(num_particles).fill(0).map(x=>vec3(0,0,0).randomized(5));
+            this.arrays.offset = this.arrays.position.map((x, i)=> offsets[~~(i/4)]);
+        }
+    };
+
+const smoke_top = defs.smoke_top =
+    class smoke_top extends Shape {
+        // **Cube** A closed 3D shape, and the first example of a compound shape (a Shape constructed
+        // out of other Shapes).  A cube inserts six Square strips into its own arrays, using six
+        // different matrices as offsets for each square.
+        constructor(num_particles) {
+            super("position", "normal", "texture_coord", "offset");
+            // Loop 3 times (for each axis), and inside loop twice (for opposing cube sides):
+            for (let i = 0; i < num_particles; i++) {
+                defs.Square.insert_transformed_copy_into(this, [9], Mat4.identity());
+            }
+            const offsets = Array(num_particles).fill(0).map(x=>vec3(0,0,0).randomized(10));
+            this.arrays.offset = this.arrays.position.map((x, i)=> offsets[~~(i/4)]);
+        }
+    };
+
+const PP_Fire_Base = defs.PP_Fire_Base =
+    class PP_Fire_Base extends defs.Phong_Shader {
+        // **Textured_Phong** is a Phong Shader extended to addditionally decal a
+        // texture image over the drawn shape, lined up according to the texture
+        // coordinates that are stored at each shape vertex.
+        vertex_glsl_code() {
+            // ********* VERTEX SHADER *********
+            return this.shared_glsl_code() + `
+                varying vec2 f_tex_coord;
+                attribute vec3 position, normal, offset;                            
+                // Position is expressed in object coordinates.
+                attribute vec2 texture_coord;
+                
+                uniform mat4 model_transform;
+                uniform mat4 projection_camera_model_transform;
+                
+                void main(){                                                                   
+                    // The vertex's final resting place (in NDCS):
+                    vec3 temp = offset;
+                    temp[1] = mod(temp[1], 0.7);
+                    gl_Position = projection_camera_model_transform * vec4(position + temp, 1.0 );
+                    // The final normal vector in screen space.
+                    N = normalize( mat3( model_transform ) * normal / squared_scale);
+                    vertex_worldspace = ( model_transform * vec4( position, 1.0 ) ).xyz;
+                    // Turn the per-vertex texture coordinate into an interpolated variable.
+                    f_tex_coord = texture_coord;
+                  } `;
+        }
+
+        fragment_glsl_code() {
+            // ********* FRAGMENT SHADER *********
+            // A fragment is a pixel that's overlapped by the current triangle.
+            // Fragments affect the final image or get discarded due to depth.
+            return this.shared_glsl_code() + `
+                varying vec2 f_tex_coord;
+                uniform sampler2D texture;
+                uniform float animation_time;
+                
+                void main(){
+                    // Sample the texture image in the correct place:
+                    vec4 tex_color = vec4(0.025/(distance(f_tex_coord, vec2(.5,.5))));
+                    if( tex_color.w < .3 ) discard;
+                                                                             // Compute an initial (ambient) color:
+                    gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
+                                                                             // Compute the final color with contributions from lights:
+                    gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
+                  } `;
+        }
+
+        update_GPU(context, gpu_addresses, gpu_state, model_transform, material) {
+            // update_GPU(): Add a little more to the base class's version of this method.
+            super.update_GPU(context, gpu_addresses, gpu_state, model_transform, material);
+            // Updated for assignment 4
+            context.uniform1f(gpu_addresses.animation_time, gpu_state.animation_time / 1000);
+            if (material.texture && material.texture.ready) {
+                // Select texture unit 0 for the fragment shader Sampler2D uniform called "texture":
+                context.uniform1i(gpu_addresses.texture, 0);
+                // For this draw, use the texture image from correct the GPU buffer:
+                material.texture.activate(context);
+            }
+        }
+    }
+
+const PP_Fire_Mid = defs.PP_Fire_Mid =
+    class PP_Fire_Mid extends defs.Phong_Shader {
+        // **Textured_Phong** is a Phong Shader extended to addditionally decal a
+        // texture image over the drawn shape, lined up according to the texture
+        // coordinates that are stored at each shape vertex.
+        vertex_glsl_code() {
+            // ********* VERTEX SHADER *********
+            return this.shared_glsl_code() + `
+                varying vec2 f_tex_coord;
+                attribute vec3 position, normal, offset;                            
+                // Position is expressed in object coordinates.
+                attribute vec2 texture_coord;
+                
+                uniform mat4 model_transform;
+                uniform mat4 projection_camera_model_transform;
+                
+                void main(){                                                                   
+                    // The vertex's final resting place (in NDCS):
+                    vec3 temp = offset;
+                    temp[1] = mod(temp[1], 1.5);
+                    gl_Position = projection_camera_model_transform * vec4(position + temp, 1.0 );
+                    // The final normal vector in screen space.
+                    N = normalize( mat3( model_transform ) * normal / squared_scale);
+                    vertex_worldspace = ( model_transform * vec4( position, 1.0 ) ).xyz;
+                    // Turn the per-vertex texture coordinate into an interpolated variable.
+                    f_tex_coord = texture_coord;
+                  } `;
+        }
+
+        fragment_glsl_code() {
+            // ********* FRAGMENT SHADER *********
+            // A fragment is a pixel that's overlapped by the current triangle.
+            // Fragments affect the final image or get discarded due to depth.
+            return this.shared_glsl_code() + `
+                varying vec2 f_tex_coord;
+                uniform sampler2D texture;
+                uniform float animation_time;
+                
+                void main(){
+                    // Sample the texture image in the correct place:
+                    vec4 tex_color = vec4(0.02/(distance(f_tex_coord, vec2(.5,.5))));
+                    if( tex_color.w < .2 ) discard;
+                                                                             // Compute an initial (ambient) color:
+                    gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
+                                                                             // Compute the final color with contributions from lights:
+                    gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
+                  } `;
+        }
+
+        update_GPU(context, gpu_addresses, gpu_state, model_transform, material) {
+            // update_GPU(): Add a little more to the base class's version of this method.
+            super.update_GPU(context, gpu_addresses, gpu_state, model_transform, material);
+            // Updated for assignment 4
+            context.uniform1f(gpu_addresses.animation_time, gpu_state.animation_time / 1000);
+            if (material.texture && material.texture.ready) {
+                // Select texture unit 0 for the fragment shader Sampler2D uniform called "texture":
+                context.uniform1i(gpu_addresses.texture, 0);
+                // For this draw, use the texture image from correct the GPU buffer:
+                material.texture.activate(context);
+            }
+        }
+    }
+
+const PP_Smoke = defs.PP_Smoke =
+    class PP_Smoke extends defs.Phong_Shader {
+        // **Textured_Phong** is a Phong Shader extended to addditionally decal a
+        // texture image over the drawn shape, lined up according to the texture
+        // coordinates that are stored at each shape vertex.
+        vertex_glsl_code() {
+            // ********* VERTEX SHADER *********
+            return this.shared_glsl_code() + `
+                varying vec2 f_tex_coord;
+                attribute vec3 position, normal, offset;                            
+                // Position is expressed in object coordinates.
+                attribute vec2 texture_coord;
+                
+                uniform mat4 model_transform;
+                uniform mat4 projection_camera_model_transform;
+                
+                void main(){                                                                   
+                    // The vertex's final resting place (in NDCS):
+                    vec3 temp = offset;
+                    temp[1] = mod(temp[1], 5.0);
+                    gl_Position = projection_camera_model_transform * vec4(position + temp, 1.0 );
+                    // The final normal vector in screen space.
+                    N = normalize( mat3( model_transform ) * normal / squared_scale);
+                    vertex_worldspace = ( model_transform * vec4( position, 1.0 ) ).xyz;
+                    // Turn the per-vertex texture coordinate into an interpolated variable.
+                    f_tex_coord = texture_coord;
+                  } `;
+        }
+
+        fragment_glsl_code() {
+            // ********* FRAGMENT SHADER *********
+            // A fragment is a pixel that's overlapped by the current triangle.
+            // Fragments affect the final image or get discarded due to depth.
+            return this.shared_glsl_code() + `
+                varying vec2 f_tex_coord;
+                uniform sampler2D texture;
+                uniform float animation_time;
+                
+                void main(){
+                    // Sample the texture image in the correct place:
+                    vec4 tex_color = vec4(0.0225/(distance(f_tex_coord, vec2(.5,.5))));
+                    if( tex_color.w < .35 ) discard;
+                                                                             // Compute an initial (ambient) color:
+                    gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
+                                                                             // Compute the final color with contributions from lights:
+                    gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
+                  } `;
+        }
+
+        update_GPU(context, gpu_addresses, gpu_state, model_transform, material) {
+            // update_GPU(): Add a little more to the base class's version of this method.
+            super.update_GPU(context, gpu_addresses, gpu_state, model_transform, material);
+            // Updated for assignment 4
+            context.uniform1f(gpu_addresses.animation_time, gpu_state.animation_time / 1000);
+            if (material.texture && material.texture.ready) {
+                // Select texture unit 0 for the fragment shader Sampler2D uniform called "texture":
+                context.uniform1i(gpu_addresses.texture, 0);
+                // For this draw, use the texture image from correct the GPU buffer:
+                material.texture.activate(context);
+            }
+        }
+    }
