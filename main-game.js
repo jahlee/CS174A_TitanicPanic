@@ -111,6 +111,9 @@ export class main_game extends Scene {
         this.timer = 0;
         this.cp = false; // checks if checkpoint has been passed
         this.msg = ""; // random message at each checkpoint
+
+        this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!"];
+
     }
 
     display_water(context, program_state) {
@@ -590,13 +593,21 @@ export class main_game extends Scene {
 
             // display the messages for each checkpoint
 
-            var messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!"];
-
+            // messages will get smaller as once a message is used, it will be popped, once all the messages are used, messages will reset
+            
+            var messages2 = this.messages;
             if (points % 5000 == 0 && points > 100) {
                 this.timer = this.t;
                 this.cp = true;
                 this.checkpoints++;
-                this.msg = messages[Math.floor(Math.random() * messages.length)];
+                let i = Math.floor(Math.random() * messages2.length);
+                this.msg = this.messages[i];
+                this.messages.splice(i, 1);
+
+                if (this.messages.length == 0) {
+                    this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!"];
+                }
+
             }
 
             if (this.cp) {
@@ -633,12 +644,11 @@ export class main_game extends Scene {
         this.shapes.text.set_string("HIGHSCORE: " + highscore.toString(), context.context);
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 10.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
 
-        //speeding up the game every checkpoint (5000 points)
-        if (points%50 == 0)
+        //speeding up the game (cap at this.a==2)
+        if (points%50 == 0 && this.a >= 2)
         {
              this.a = this.a/1.001;
-        }
-       
+        }       
 
         // beginning game dialogue
         if (this.t < 5 && this.firstRound) {
