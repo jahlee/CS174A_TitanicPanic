@@ -215,7 +215,7 @@ export class main_game extends Scene {
         if (this.alive) { // ONLY LET USER DO KEY CONTROLS IF THE PLAYER IS STILL ALIVE
 
             this.boat2 = Mat4.identity().times(Mat4.scale(1,1,-1))
-                .times(Mat4.translation(0.1,0,2))
+                .times(Mat4.translation(0.1,1.5,2))
                 .times(Mat4.translation(this.pre_position, 0, 0));
 
             let degree = -this.vel/0.25;
@@ -448,38 +448,31 @@ export class main_game extends Scene {
         let iceberg1z = time1 - 50;
         let iceberg2z = time2 - 50;
         let iceberg3z = time3 - 50;
+        let boatz = 50;
 
-       // collision detection
+       // collision detection-- depending on width/girth of icebergs, check if within bounds for collision with the boat
        if (this.alive) {
 
               // iceberg 1
-              if ((Math.abs(iceberg1z - 55) < 3 && Math.abs(this.pre_position - this.x) < 3)) {
+              if ((Math.abs(iceberg1z - boatz) < 3 && Math.abs(this.pre_position - this.x) < 3)) {
                   this.alive = false;
               }
               
               // iceberg 2
-              if ((Math.abs(iceberg2z - 55) < 3 && Math.abs(this.pre_position - this.x2) < 4)) {
+              if ((Math.abs(iceberg2z - boatz) < 3 && Math.abs(this.pre_position - this.x2) < 4)) {
                   this.alive = false;
               }
 
               // iceberg 3
-              if ((Math.abs(iceberg3z - 55) < 3 && Math.abs(this.pre_position - this.x3) < 4)) {
+              if ((Math.abs(iceberg3z - boatz) < 3 && Math.abs(this.pre_position - this.x3) < 4)) {
                   this.alive = false;
               }
        }
 
-        this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,0,2));
+        this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.5,2));
         this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, this.pre_position_y, 0));
 
-        // sinking the boat upon collision
-        if (!this.alive) {
-            if (this.pre_position_y > -5) {
-                this.pre_position_y -= 0.05;
-            }
-        }
-        else {
-            this.turn_boat();
-        }
+        this.turn_boat();
 
         this.display_water(context, program_state);
         const p = this.t + 4;
@@ -487,6 +480,7 @@ export class main_game extends Scene {
         const r = q + 4;
         
         if (this.alive) {
+
             this.rmountain1 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0)));
             this.rmountain2 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (p%16.0))));
             this.rmountain3 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0))));
