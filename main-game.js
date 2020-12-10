@@ -95,6 +95,11 @@ export class main_game extends Scene {
         this.rmountain1 = this.rmountain2 = this.rmountain3 = this.rmountain4 = this.lmountain1 = this.lmountain2 = this.lmountain3 = this.lmountain4 = Mat4.identity();
         this.boat_texture = 0;
         this.environment = 0;
+
+        this.checkpoints = 0;
+        this.timer = 0;
+        this.cp = false; // checks if checkpoint has been passed
+        this.msg = ""; // random message at each checkpoint
     }
 
     display_water(context, program_state) {
@@ -423,6 +428,7 @@ export class main_game extends Scene {
             this.startGame = false;
             this.new_highscore = false;
             this.a = 3;
+            this.checkpoints = 0;
         }
 
         let iceberg1z = time1 - 50;
@@ -552,7 +558,7 @@ export class main_game extends Scene {
             this.shapes.iceberg.draw(context, program_state, this.iceberg2, this.materials.ice.override({ambient: 0.6 - 0.3 * abs_cycle}));
             this.shapes.iceberg.draw(context, program_state, this.iceberg3, this.materials.ice.override({ambient: 0.6 - 0.3 * abs_cycle}));
         }
-
+       
 
         if (this.alive) { // Only increment points while player is alive
             points += 10;
@@ -560,6 +566,30 @@ export class main_game extends Scene {
                 highscore = points;
                 this.new_highscore = true;
             }
+
+            // display the messages for each checkpoint
+
+            var messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!"];
+
+            if (points % 5000 == 0 && points > 100) {
+                this.timer = this.t;
+                this.cp = true;
+                this.checkpoints++;
+                this.msg = messages[Math.floor(Math.random() * messages.length)];
+            }
+
+            if (this.cp) {
+                if (this.t - this.timer < 3) {
+                    let checkpoint_msg = "Checkpoint " + this.checkpoints.toString() + " passed!";
+                    this.shapes.text.set_string(checkpoint_msg, context.context);
+                    this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4, 7, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+                    this.shapes.text.set_string(this.msg, context.context);
+                    this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(this.pre_position - 2, 2, -5)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
+                } else {
+                    this.cp = false;
+                }
+            }
+
         } else { // Game over screen upon losing
             this.shapes.text.set_string("GAME", context.context);
             context.context.disable(context.context.DEPTH_TEST);
@@ -582,6 +612,7 @@ export class main_game extends Scene {
         this.shapes.text.set_string("HIGHSCORE: " + highscore.toString(), context.context);
         this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 10.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
 
+        //speeding up the game every checkpoint (5000 points)
         if (points%50 == 0)
         {
              this.a = this.a/1.001;
@@ -589,11 +620,11 @@ export class main_game extends Scene {
        
 
         // beginning game dialogue
-        if (this.t < 3 && this.firstRound) {
+        if (this.t < 5 && this.firstRound) {
             //this.shapes.cube.draw(context, program_state, model_transform.times(Mat4.translation(0,20,-40).times(Mat4.scale(45,75,75))), this.materials.logo);
             this.shapes.text.set_string("OH NO! OBSTACLES SPOTTED AHEAD!", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
-        } else if (this.t < 7 && this.firstRound) {
+        } else if (this.t < 8 && this.firstRound) {
             this.shapes.text.set_string("STEER THIS BOAT TO SAFETY!", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
         } else {
