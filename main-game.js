@@ -54,6 +54,17 @@ export class main_game extends Scene {
             text: new Text_Line(45),
         };
 
+        //background music
+        this.audio = new Audio('assets/bgmusic.mp3');
+        this.audio.play();
+        /*this.audio.loop = true;
+        this.audio.volume = 0.5;
+        const playPromise = this.audio.play().then(response => {
+            console.log(response);
+        }).catch(e => {
+            console.log(e.message);
+        });*/
+
         // *** Materials
         this.materials = {
             ice: new Material(new defs.Phong_Shader(),
