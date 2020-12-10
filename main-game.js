@@ -138,7 +138,7 @@ export class main_game extends Scene {
         this.cp = false; // checks if checkpoint has been passed
         this.msg = ""; // random message at each checkpoint
 
-        this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!"];
+        this.messages = [];
 
     }
 
@@ -165,9 +165,9 @@ export class main_game extends Scene {
 
         // +x is LEFT, + y is INTO THE SCREEN, +z is DOWN
         let middle = this.boat2.times(r).times(Mat4.translation(-0.5,0,1)).times(Mat4.scale(2,12,1));
-        //context.context.disable(context.context.DEPTH_TEST);
+        context.context.disable(context.context.DEPTH_TEST);
         this.shapes.back.draw(context, program_state, middle, this.materials.back_water);
-        //context.context.enable(context.context.DEPTH_TEST);
+        context.context.enable(context.context.DEPTH_TEST);
 
     }
 
@@ -474,24 +474,27 @@ export class main_game extends Scene {
         let iceberg1z = time1 - 50;
         let iceberg2z = time2 - 50;
         let iceberg3z = time3 - 50;
-        let boatz = 50;
+        let boatz = 51;
 
        // collision detection-- depending on width/girth of icebergs, check if within bounds for collision with the boat
        if (this.alive) {
 
               // iceberg 1
-              if ((Math.abs(iceberg1z - boatz) < 3 && Math.abs(this.pre_position - this.x) < 3)) {
+              if ((Math.abs(iceberg1z - boatz) < 3 && Math.abs(this.pre_position - this.x) < 3.5)) {
                   this.alive = false;
+//                   console.log("1");
               }
               
               // iceberg 2
-              if ((Math.abs(iceberg2z - boatz) < 3 && Math.abs(this.pre_position - this.x2) < 4)) {
+              if ((Math.abs(iceberg2z - boatz) < 3 && Math.abs(this.pre_position - this.x2) < 3.5)) {
                   this.alive = false;
+//                   console.log("2");
               }
 
               // iceberg 3
               if ((Math.abs(iceberg3z - boatz) < 3 && Math.abs(this.pre_position - this.x3) < 4)) {
                   this.alive = false;
+//                   console.log("3");
               }
        }
 
@@ -571,7 +574,7 @@ export class main_game extends Scene {
         if (this.alive)
             this.rock_the_boat();
 
-        //context.context.disable(context.context.DEPTH_TEST);
+        context.context.disable(context.context.DEPTH_TEST);
         switch (this.boat_texture % 3) {
             case 0:
                 this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
@@ -605,7 +608,7 @@ export class main_game extends Scene {
         this.shapes.cloud.draw(context, program_state, this.clouds13, this.materials.clouds);
         this.shapes.cloud.draw(context, program_state, this.clouds14, this.materials.clouds);
 
-        //context.context.enable(context.context.DEPTH_TEST);
+        context.context.enable(context.context.DEPTH_TEST);
 
         let points = this.pre_points;
         let highscore = this.pre_highscore;
@@ -632,7 +635,9 @@ export class main_game extends Scene {
             // display the messages for each checkpoint
 
             // messages will get smaller as once a message is used, it will be popped, once all the messages are used, messages will reset
-            
+            if (this.messages.length == 0) {
+                this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!", "ASISH WOULD BE PROUD!", "A+ FOR YOU!"];
+            }
             var messages2 = this.messages;
             if (points % 5000 == 0 && points > 100) {
                 this.timer = this.t;
@@ -641,11 +646,6 @@ export class main_game extends Scene {
                 let i = Math.floor(Math.random() * messages2.length);
                 this.msg = this.messages[i];
                 this.messages.splice(i, 1);
-
-                if (this.messages.length == 0) {
-                    this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!", "ASISH WOULD BE PROUD!", "A+ FOR YOU!"];
-                }
-
             }
 
             if (this.cp) {
