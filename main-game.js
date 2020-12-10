@@ -517,7 +517,7 @@ export class main_game extends Scene {
 
 
             this.lmountain1 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0))).times(Mat4.scale(1, 1, 8));
-            this.lmountain2 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (p%16.0)))).times(Mat4.scale(1, 1, 8));
+            this.lmountain2 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (s%16.0)))).times(Mat4.scale(1, 1, 8));
             //this.lmountain3 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0))));
             //this.lmountain4 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0))));
             //this.lmountain5 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (s%16.0))));
@@ -545,8 +545,8 @@ export class main_game extends Scene {
         }
 
         // right mountains
-        this.shapes.mountain2.draw(context, program_state, this.rmountain1, this.materials.mountain);
-        this.shapes.mountain2.draw(context, program_state, this.rmountain2, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain1, this.materials.ice);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain2, this.materials.ice);
        // this.shapes.mountain2.draw(context, program_state, this.rmountain3, this.materials.mountain);
         //this.shapes.mountain2.draw(context, program_state, this.rmountain4, this.materials.mountain);
         // this.shapes.mountain2.draw(context, program_state, this.rmountain5, this.materials.mountain);
@@ -554,8 +554,8 @@ export class main_game extends Scene {
         // this.shapes.mountain2.draw(context, program_state, this.rmountain7, this.materials.mountain);
         // this.shapes.mountain2.draw(context, program_state, this.rmountain8, this.materials.mountain);
         // left mountains
-        this.shapes.mountain2.draw(context, program_state, this.lmountain1, this.materials.mountain);
-        this.shapes.mountain2.draw(context, program_state, this.lmountain2, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain1, this.materials.ice);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain2, this.materials.ice);
         // this.shapes.mountain2.draw(context, program_state, this.lmountain3, this.materials.mountain);
         // this.shapes.mountain2.draw(context, program_state, this.lmountain4, this.materials.mountain);
         //  this.shapes.mountain2.draw(context, program_state, this.lmountain5, this.materials.mountain);
