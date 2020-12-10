@@ -60,7 +60,8 @@ export class main_game extends Scene {
             base: new base(this.num_particles),
             mid: new mid(this.num_particles2),
             smoke: new smoke(this.num_particles3),
-            smoke_top: new smoke_top(this.num_particles4)
+            smoke_top: new smoke_top(this.num_particles4),
+            mountain2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2)
         };
 
         //background music
@@ -120,7 +121,10 @@ export class main_game extends Scene {
         this.stopL = this.stopR = true;
         this.pre_highscore = 0;
         this.new_highscore = false;
-        this.rmountain1 = this.rmountain2 = this.rmountain3 = this.rmountain4 = this.lmountain1 = this.lmountain2 = this.lmountain3 = this.lmountain4 = Mat4.identity();
+        this.rmountain1 = this.rmountain2 = this.rmountain3 = this.rmountain4
+            = this.rmountain5 = this.rmountain6 = this.rmountain7 = this.rmountain8
+            = this.lmountain1 = this.lmountain2 = this.lmountain3 = this.lmountain4
+            = this.lmountain5 = this.lmountain6 = this.lmountain7 = this.lmountain8 = Mat4.identity();
         this.boat_texture = 0;
         this.environment = 0;
 
@@ -492,9 +496,13 @@ export class main_game extends Scene {
         this.turn_boat();
 
         this.display_water(context, program_state);
-        const p = this.t + 4;
-        const q = p + 4;
-        const r = q + 4;
+        const p = this.t + 2;
+        const q = p + 2;
+        const r = q + 2;
+        const s = r + 2;
+        const u = s + 2;
+        const v = u + 2;
+        const w = v + 2;
         
         if (this.alive) {
 
@@ -502,11 +510,21 @@ export class main_game extends Scene {
             this.rmountain2 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (p%16.0))));
             this.rmountain3 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0))));
             this.rmountain4 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0))));
+            this.rmountain5 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (s%16.0))));
+            this.rmountain6 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (u%16.0))));
+            this.rmountain7 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (v%16.0))));
+            this.rmountain8 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (w%16.0))));
+
 
             this.lmountain1 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0)));
             this.lmountain2 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (p%16.0))));
             this.lmountain3 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0))));
             this.lmountain4 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0))));
+            this.lmountain5 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (s%16.0))));
+            this.lmountain6 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (u%16.0))));
+            this.lmountain7 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (v%16.0))));
+            this.lmountain8 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (w%16.0))));
+
 
 
             this.clouds1 = model_transform.times(Mat4.translation(0, 20, -60)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.85)*75-50));
@@ -527,15 +545,23 @@ export class main_game extends Scene {
         }
 
         // right mountains
-        this.shapes.mountain.draw(context, program_state, this.rmountain1, this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, this.rmountain2, this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, this.rmountain3, this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, this.rmountain4, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain1, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain2, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain3, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain4, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain5, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain6, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain7, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain8, this.materials.mountain);
         // left mountains
-        this.shapes.mountain.draw(context, program_state, this.lmountain1, this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, this.lmountain2, this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, this.lmountain3, this.materials.mountain);
-        this.shapes.mountain.draw(context, program_state, this.lmountain4, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain1, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain2, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain3, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain4, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain5, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain6, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain7, this.materials.mountain);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain8, this.materials.mountain);
 
         if (this.alive)
             this.rock_the_boat();
