@@ -492,12 +492,10 @@ export class main_game extends Scene {
             this.lmountain4 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0))));
 
 
-
-
             this.clouds1 = model_transform.times(Mat4.translation(0, 20, -60)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.85)*75-50));
             this.clouds2 = model_transform.times(Mat4.translation(-50, 15, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.5)*75-50));
             this.clouds3 = model_transform.times(Mat4.translation(-80, 15, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.15)*75-50));
-            this.clouds4 = model_transform.times(Mat4.translation(30, 14, 0)).times(Mat4.translation(0, 0, ((this.t/40)%0.4)*75-50)).times(Mat4.scale(2, 2, 2));
+            this.clouds4 = model_transform.times(Mat4.translation(30, 14, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.4)*75-50));
             this.clouds5 = model_transform.times(Mat4.translation(-20, 20, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.58)*75-50));
             this.clouds6 = model_transform.times(Mat4.translation(20, 10, -55)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.91)*75-50))
             this.clouds7 = model_transform.times(Mat4.translation(44, 19, -10)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.5)*75-50))
@@ -508,9 +506,6 @@ export class main_game extends Scene {
             this.clouds12 = model_transform.times(Mat4.translation(80, 40, -25)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.27)*75-50))
             this.clouds13 = model_transform.times(Mat4.translation(-100, 39, -10)).times(Mat4.scale(5, 5, 5)).times(Mat4.translation(0, 0, ((this.t/40)%0.42)*75-50));
             this.clouds14 = model_transform.times(Mat4.translation(50, 40, -50)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.65)*75-50));
-
-
-           // .times(Mat4.translation(0, 0, ((this.t/20)%2)-50))
 
         }
 
