@@ -62,7 +62,7 @@ export class main_game extends Scene {
             mid: new mid(this.num_particles2),
             smoke: new smoke(this.num_particles3),
             smoke_top: new smoke_top(this.num_particles4),
-            mountain2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2)
+            mountain2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
         };
 
         //background music
@@ -138,7 +138,7 @@ export class main_game extends Scene {
         this.cp = false; // checks if checkpoint has been passed
         this.msg = ""; // random message at each checkpoint
 
-        this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!"];
+        this.messages = [];
 
     }
 
@@ -474,24 +474,27 @@ export class main_game extends Scene {
         let iceberg1z = time1 - 50;
         let iceberg2z = time2 - 50;
         let iceberg3z = time3 - 50;
-        let boatz = 50;
+        let boatz = 51;
 
        // collision detection-- depending on width/girth of icebergs, check if within bounds for collision with the boat
        if (this.alive) {
 
               // iceberg 1
-              if ((Math.abs(iceberg1z - boatz) < 3 && Math.abs(this.pre_position - this.x) < 3)) {
+              if ((Math.abs(iceberg1z - boatz) < 3 && Math.abs(this.pre_position - this.x) < 3.5)) {
                   this.alive = false;
+//                   console.log("1");
               }
               
               // iceberg 2
-              if ((Math.abs(iceberg2z - boatz) < 3 && Math.abs(this.pre_position - this.x2) < 4)) {
+              if ((Math.abs(iceberg2z - boatz) < 3 && Math.abs(this.pre_position - this.x2) < 3.5)) {
                   this.alive = false;
+//                   console.log("2");
               }
 
               // iceberg 3
               if ((Math.abs(iceberg3z - boatz) < 3 && Math.abs(this.pre_position - this.x3) < 4)) {
                   this.alive = false;
+//                   console.log("3");
               }
        }
 
@@ -632,7 +635,9 @@ export class main_game extends Scene {
             // display the messages for each checkpoint
 
             // messages will get smaller as once a message is used, it will be popped, once all the messages are used, messages will reset
-            
+            if (this.messages.length == 0) {
+                this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!", "ASISH WOULD BE PROUD!", "A+ FOR YOU!"];
+            }
             var messages2 = this.messages;
             if (points % 5000 == 0 && points > 100) {
                 this.timer = this.t;
@@ -641,11 +646,6 @@ export class main_game extends Scene {
                 let i = Math.floor(Math.random() * messages2.length);
                 this.msg = this.messages[i];
                 this.messages.splice(i, 1);
-
-                if (this.messages.length == 0) {
-                    this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!", "ASISH WOULD BE PROUD!", "A+ FOR YOU!"];
-                }
-
             }
 
             if (this.cp) {
@@ -662,25 +662,25 @@ export class main_game extends Scene {
 
         } else { // Game over screen upon losing
             this.shapes.text.set_string("GAME", context.context);
-            context.context.disable(context.context.DEPTH_TEST);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
+            //context.context.disable(context.context.DEPTH_TEST);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*5)/10+2)), this.materials.text_image);
             this.shapes.text.set_string("OVER", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*5)/10)), this.materials.text_image);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*5)/10+2)), this.materials.text_image);
             this.shapes.text.set_string("Press P to try again", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 3, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
-            context.context.enable(context.context.DEPTH_TEST);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 3, -5 * Math.sin(this.t*5)/10+2)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+            //context.context.enable(context.context.DEPTH_TEST);
             if (this.new_highscore) {
                 this.shapes.text.set_string("*NEW HIGHSCORE!*", context.context);
-                this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-3.5, 2, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+                this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-3.5, 2, -5 * Math.sin(this.t*5)/10+2)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
             }
         }
 
         this.pre_points = points;
         this.pre_highscore = highscore;
         this.shapes.text.set_string("SCORE: " + points.toString(), context.context);
-        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 11.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-9, 10.8, 2)).times(Mat4.scale(0.25, 0.25, 0.3)), this.materials.text_image);
         this.shapes.text.set_string("HIGHSCORE: " + highscore.toString(), context.context);
-        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-10.5, 10.5, 0)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
+        this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-9, 10.2, 2)).times(Mat4.scale(0.25, 0.25, 0.3)), this.materials.text_image);
 
         //speeding up the game (cap at this.a==2)
         if (points%50 == 0 && this.a >= 2)
