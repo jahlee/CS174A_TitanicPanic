@@ -289,9 +289,9 @@ export class main_game extends Scene {
         this.key_triggered_button("Change Camera Angle", ["c"], () => {
             this.cam_pos ^= 1;
         });
-//         this.key_triggered_button("Toggle Locked Camera", ["t"], () => {
-//             this.not_locked ^= 1;
-//         });
+        this.key_triggered_button("Toggle Locked Camera", ["t"], () => {
+            this.not_locked ^= 1;
+        });
 
         this.new_line();
 
@@ -427,22 +427,25 @@ export class main_game extends Scene {
         let iceberg1z = time1 - 50;
         let iceberg2z = time2 - 50;
         let iceberg3z = time3 - 50;
-        let boatz = 51;
+        let boatz = 55;
 
         if (this.alive) {
               // iceberg 1
-              if ((Math.abs(iceberg1z - boatz) < 3 && Math.abs(this.pre_position - this.x) < 3.5)) {
+              if ((Math.abs(iceberg1z - boatz) < 3 && Math.abs(this.pre_position - this.x) < 2.5)) {
                   this.alive = false;
+//                   console.log("1");
               }
               
               // iceberg 2
               if ((Math.abs(iceberg2z - boatz) < 3 && Math.abs(this.pre_position - this.x2) < 3.5)) {
                   this.alive = false;
+//                   console.log("2");
               }
 
               // iceberg 3
               if ((Math.abs(iceberg3z - boatz) < 3 && Math.abs(this.pre_position - this.x3) < 4)) {
                   this.alive = false;
+//                   console.log("3");
               }
        }
 
@@ -577,7 +580,6 @@ export class main_game extends Scene {
             this.shapes.iceberg.draw(context, program_state, this.iceberg2, this.materials.ice.override({ambient: 0.6 - 0.3 * abs_cycle}));
             this.shapes.iceberg.draw(context, program_state, this.iceberg3, this.materials.ice.override({ambient: 0.6 - 0.3 * abs_cycle}));
         }
-       
 
         if (this.alive) { // Only increment points while player is alive
             this.last_alive = this.t;
@@ -653,13 +655,13 @@ export class main_game extends Scene {
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4, 6, -5 * Math.sin(this.t*5)/10)).times(Mat4.scale(0.2, 0.2, 0.2)), this.materials.text_image);
         } else {
             if (this.size_count < 0.17) {
-                this.size_count += 0.01
+                this.size_count += 0.01;
             }
             this.shapes.text.set_string("USE THE LEFT AND RIGHT ARROW KEYS", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(1, 11.5, 0)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image);
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(0, 10.8, 2)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image);
 
             this.shapes.text.set_string("TO STEER THE BOAT AND AVOID THE ICEBERGS", context.context);
-            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(0, 11, 0)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image); 
+            this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-1, 10.3, 2)).times(Mat4.scale(this.size_count, this.size_count, this.size_count)), this.materials.text_image); 
         }
 
         // change camera positions and lock them
@@ -667,9 +669,9 @@ export class main_game extends Scene {
             let cam = model_transform.times(Mat4.translation(this.pre_position, 2.5, -2.5));
             program_state.set_camera(Mat4.inverse(cam));
         }
-//         else if (this.not_locked) {         // free moving camera
-//             program_state.set_camera(this.initial_camera_location);
-//         }
+        else if (this.not_locked) {         // free moving camera
+            program_state.set_camera(this.initial_camera_location);
+        }
         else if (!this.cam_pos) {   // OG view
             let cam = model_transform.times(Mat4.translation(0,6,15));
             program_state.set_camera(Mat4.inverse(cam));
