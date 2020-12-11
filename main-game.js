@@ -497,7 +497,6 @@ export class main_game extends Scene {
             this.rock_the_boat();
 
         // let user change the texture of the boat
-        context.context.disable(context.context.DEPTH_TEST);
         switch (this.boat_texture % 3) {
             case 0:
                 this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
@@ -515,7 +514,6 @@ export class main_game extends Scene {
                 this.set_boat.style.color = "cyan";
                 break;
         }
-        context.context.enable(context.context.DEPTH_TEST);
 
         // drawing clouds
         this.shapes.cloud.draw(context, program_state, this.clouds1, this.materials.clouds);
@@ -703,10 +701,8 @@ export class main_game extends Scene {
             this.checkpoints = 0;
             this.cp = false; // if user dies while message is still on screen, reset it
         }
-
-      }
+    }
 }
-
 
 class Texture_Scroll_Water extends Textured_Phong {
     // TODO:  Modify the shader below (right now it's just the same fragment shader as Textured_Phong) for requirement #6.
@@ -991,12 +987,6 @@ const PP_Smoke = defs.PP_Smoke =
                 
                 void main(){
                     // Sample the texture image in the correct place:
-                    // vec4 tex_color = vec4(0.001/(distance(f_tex_coord, vec2(.5,.5))));
-                    // if( tex_color.w > 0.9 ) discard;
-                    
-                    // vec4 tex_color = vec4(0.005/(distance(f_tex_coord, vec2(.5,.5))));
-                    // if( tex_color.w > .1 ) discard;
-                    
                     vec4 tex_color = vec4(0.05/(distance(f_tex_coord, vec2(.5,.5))));
                     if( tex_color.w < .5 ) discard;
                                                                              // Compute an initial (ambient) color:
