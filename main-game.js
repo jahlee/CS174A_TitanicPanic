@@ -46,6 +46,14 @@ export class main_game extends Scene {
         this.num_particles3 = 70;
         this.num_particles4 = 100;
 
+
+        //AUDIO TEST
+
+        this.music = new Audio("assets/bgmusic.mp3");
+        this.music.loop = true;
+        this.music.volume = 0.5;
+        this.music.play()
+
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
             sphere: new defs.Subdivision_Sphere(4),
@@ -570,6 +578,11 @@ export class main_game extends Scene {
         this.shapes.mountain2.draw(context, program_state, this.lmountain6, this.materials.ice);
         this.shapes.mountain2.draw(context, program_state, this.lmountain7, this.materials.ice);
         this.shapes.mountain2.draw(context, program_state, this.lmountain8, this.materials.ice);
+
+        this.music.addEventListener("canplaythrough", event => {
+            /* the audio is now playable; play it if permissions allow */
+            this.music.play();
+        });
 
         if (this.alive)
             this.rock_the_boat();
