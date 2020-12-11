@@ -42,7 +42,8 @@ export class main_game extends Scene {
 
         this.num_particles = 10;
         this.num_particles2 = 40;
-        this.num_particles3 = 256;
+        // this.num_particles3 = 256;
+        this.num_particles3 = 70;
         this.num_particles4 = 100;
 
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
@@ -78,8 +79,6 @@ export class main_game extends Scene {
         // *** Materials
         this.materials = {
             ice: new Material(new defs.Phong_Shader(),
-                {ambient: 0.9, diffusivity: 2, specularity: 0.5, color: hex_color("#87ceeb")}),
-            ice2: new Material(new defs.Phong_Shader(),
                 {ambient: 0.9, diffusivity: 1, specularity: 0.5, color: hex_color("#87ceeb")}),
             sky: new Material(new defs.Phong_Shader(),
                 {ambient: 0.9, diffusivity: 1, specularity: 0.5, color: hex_color("#87ceeb")}),
@@ -103,8 +102,12 @@ export class main_game extends Scene {
             particles2: new Material(new PP_Fire_Mid(), {
                 color: color(1.0,0.0,0.0,0.95), ambient: 0.6, diffusivity: 1, specularity: 1}),
 
+            // particles3: new Material(new PP_Smoke(), {
+            //     color: color(0,0,0,0.8), ambient: 0.4, diffusivity: 0.1, specularity: 0.1}),
+
             particles3: new Material(new PP_Smoke(), {
-                color: color(0,0,0,0.8), ambient: 0.4, diffusivity: 0.1, specularity: 0.1}),
+                color: color(0,0,0,1), ambient: 0, diffusivity: 0, specularity: 0}),
+
             back_water: new Material(new Texture_Scroll_Back_Water(), {ambient: 0.65, diffusivity: 0, specularity: 0, color: color(0.8,0.6,0.8,1)}),
             movecartoon: new Material(new Texture_Scroll_Water(), {ambient: 0.2, diffusivity: 2.5, specularity: 0.35, color: color(0.1,0.15,0.9,1), texture: new Texture("assets/cartoonsea.png")}),  //hex_color("#00002A")
             rotatecartoon: new Material(new Texture_Rotate(), {ambient: 0.5, diffusivity: 0.5, specularity: 0.5, color: color(0,0,1,0.7), texture: new Texture("assets/cartoonsea.png")})
@@ -732,17 +735,22 @@ export class main_game extends Scene {
             this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(0,2,0)), this.materials.particles2);
             this.shapes.mid.copy_onto_graphics_card(context.context, ["offset"], false);
 
-            const offsets3 = Array(this.num_particles3).fill(0).map(x=>vec3(0,0.01,0).randomized(.05));
+            const offsets3 = Array(this.num_particles3).fill(0).map(x=>vec3(0,0.02,0).randomized(.05));
             this.shapes.smoke.arrays.offset = this.shapes.smoke.arrays.offset.map((x, i)=> x.plus(offsets3[Math.floor(i/4)]));
-            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(0,1.5,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.2,6.3,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(0.2,3.2,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(0.1,5.4,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.2,1,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.1,2.5,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.3,4.7,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
             this.shapes.smoke.copy_onto_graphics_card(context.context, ["offset"], false);
 
-            this.shapes.smoke_top.arrays.offset = this.shapes.smoke_top.arrays.offset.map((x, i)=> x.plus(offsets3[Math.floor(i/4)]));
-            this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(0,2,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-            this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(0,4,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-            this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(-2,5,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-            this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(2,5,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-            this.shapes.smoke_top.copy_onto_graphics_card(context.context, ["offset"], false);
+            // this.shapes.smoke_top.arrays.offset = this.shapes.smoke_top.arrays.offset.map((x, i)=> x.plus(offsets3[Math.floor(i/4)]));
+            // this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(0,2,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            // this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(0,4,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            // this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(-2,5,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            // this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(2,5,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+            // this.shapes.smoke_top.copy_onto_graphics_card(context.context, ["offset"], false);
         }
 
       }
@@ -1027,7 +1035,7 @@ const PP_Smoke = defs.PP_Smoke =
                 void main(){                                                                   
                     // The vertex's final resting place (in NDCS):
                     vec3 temp = offset;
-                    temp[1] = mod(temp[1], 5.0);
+                    temp[1] = mod(temp[1], 6.0);
                     gl_Position = projection_camera_model_transform * vec4(position + temp, 1.0 );
                     // The final normal vector in screen space.
                     N = normalize( mat3( model_transform ) * normal / squared_scale);
@@ -1048,8 +1056,17 @@ const PP_Smoke = defs.PP_Smoke =
                 
                 void main(){
                     // Sample the texture image in the correct place:
-                    vec4 tex_color = vec4(0.0225/(distance(f_tex_coord, vec2(.5,.5))));
-                    if( tex_color.w < .35 ) discard;
+                    // vec4 tex_color = vec4(0.0225/(distance(f_tex_coord, vec2(.5,.5))));
+                    // if( tex_color.w < .35 ) discard;
+                    
+                    // vec4 tex_color = vec4(0.001/(distance(f_tex_coord, vec2(.5,.5))));
+                    // if( tex_color.w > 0.9 ) discard;
+                    
+                    // vec4 tex_color = vec4(0.005/(distance(f_tex_coord, vec2(.5,.5))));
+                    // if( tex_color.w > .1 ) discard;
+                    
+                    vec4 tex_color = vec4(0.05/(distance(f_tex_coord, vec2(.5,.5))));
+                    if( tex_color.w < .5 ) discard;
                                                                              // Compute an initial (ambient) color:
                     gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
                                                                              // Compute the final color with contributions from lights:
