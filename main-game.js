@@ -45,6 +45,7 @@ export class main_game extends Scene {
         // this.num_particles3 = 256;
         this.num_particles3 = 70;
         this.num_particles4 = 100;
+        this.last_alive = 0;
 
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
@@ -117,7 +118,7 @@ export class main_game extends Scene {
         this.initial_camera_location = Mat4.look_at(vec3(0, 6, 15), vec3(0, 6, 0), vec3(0, 1, 0));
         this.pre_points = 0;
         this.pre_position = 0; // boat's x position
-        this.pre_position_y = 0; // boat's y position
+        this.pre_position_y = 1.5; // boat's y position
         this.alive = true;
         this.a = 3;
         this.size_count = 0;
@@ -238,12 +239,9 @@ export class main_game extends Scene {
     }
 
     turn_boat() {
+        this.boat2 = Mat4.identity().times(Mat4.scale(1,1,-1))
+            .times(Mat4.translation(this.pre_position, this.pre_position_y,2));
         if (this.alive) { // ONLY LET USER DO KEY CONTROLS IF THE PLAYER IS STILL ALIVE
-
-            this.boat2 = Mat4.identity().times(Mat4.scale(1,1,-1))
-                .times(Mat4.translation(0.1,1.5,2))
-                .times(Mat4.translation(this.pre_position, 0, 0));
-
             let degree = -this.vel/0.25;
             if (this.RIGHT) {
                 this.vel += 0.01;
@@ -270,6 +268,11 @@ export class main_game extends Scene {
             else if (this.pre_position < -10) {
                 this.pre_position = -10;
                 this.vel = 0;
+            }
+        }
+        else {
+            if (this.last_alive + 10 < this.t && this.pre_position_y > -5) {
+                this.pre_position_y -= 0.05;
             }
         }
     }
@@ -398,6 +401,10 @@ export class main_game extends Scene {
             close_color = color(1,1,1,1);
             main_color = color(0.7, 0.7, 0.7, 1);
         }
+        if (!this.alive) {
+            close_light_z = -2;
+            close_light_y = this.pre_position_y + 1;
+        }
 
         // lights: one from sun/moon, one from boat
         program_state.lights = [new Light(vec4(0, Math.ceil(30*abs_cycle) - 5,-105,1), main_color, main_light), new Light(vec4(this.pre_position,close_light_y,close_light_z,1), close_color, boat_light)];
@@ -459,7 +466,7 @@ export class main_game extends Scene {
             program_state.animation_time = 0;
             //put boat at center
             this.pre_position = 0;
-            this.pre_position_y = 0;
+            this.pre_position_y = 1.5;
             this.alive = true;
             //reset boat movement
             this.RIGHT = false;
@@ -498,8 +505,8 @@ export class main_game extends Scene {
               }
        }
 
-        this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.5,2));
-        this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, this.pre_position_y, 0));
+        // this.boat2 = model_transform.times(Mat4.scale(1,1,-1)).times(Mat4.translation(0.1,1.5,2));
+        // this.boat2 = this.boat2.times(Mat4.translation(this.pre_position, this.pre_position_y, 0));
 
         this.turn_boat();
 
@@ -532,25 +539,21 @@ export class main_game extends Scene {
             //this.lmountain6 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (u%16.0))));
             //this.lmountain7 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (v%16.0))));
             //this.lmountain8 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (w%16.0))));
-
-
-
-            this.clouds1 = model_transform.times(Mat4.translation(0, 20, -60)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.85)*75-50));
-            this.clouds2 = model_transform.times(Mat4.translation(-50, 15, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.5)*75-50));
-            this.clouds3 = model_transform.times(Mat4.translation(-80, 15, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.15)*75-50));
-            this.clouds4 = model_transform.times(Mat4.translation(30, 14, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.4)*75-50));
-            this.clouds5 = model_transform.times(Mat4.translation(-20, 20, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.58)*75-50));
-            this.clouds6 = model_transform.times(Mat4.translation(20, 10, -55)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.91)*75-50))
-            this.clouds7 = model_transform.times(Mat4.translation(44, 19, -10)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.5)*75-50))
-            this.clouds8 = model_transform.times(Mat4.translation(-30, 12, -20)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.7)*75-50));
-            this.clouds9 = model_transform.times(Mat4.translation(-80, 31, -40)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.37)*75-50));
-            this.clouds10 = model_transform.times(Mat4.translation(-25, 22, -30)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.75)*75-50));
-            this.clouds11 = model_transform.times(Mat4.translation(15, 12, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.82)*75-50))
-            this.clouds12 = model_transform.times(Mat4.translation(80, 40, -25)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.27)*75-50))
-            this.clouds13 = model_transform.times(Mat4.translation(-100, 39, -10)).times(Mat4.scale(5, 5, 5)).times(Mat4.translation(0, 0, ((this.t/40)%0.42)*75-50));
-            this.clouds14 = model_transform.times(Mat4.translation(50, 40, -50)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.65)*75-50));
-
         }
+        this.clouds1 = model_transform.times(Mat4.translation(0, 20, -60)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.85)*75-50));
+        this.clouds2 = model_transform.times(Mat4.translation(-50, 15, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.5)*75-50));
+        this.clouds3 = model_transform.times(Mat4.translation(-80, 15, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.15)*75-50));
+        this.clouds4 = model_transform.times(Mat4.translation(30, 14, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.4)*75-50));
+        this.clouds5 = model_transform.times(Mat4.translation(-20, 20, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.58)*75-50));
+        this.clouds6 = model_transform.times(Mat4.translation(20, 10, -55)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.91)*75-50))
+        this.clouds7 = model_transform.times(Mat4.translation(44, 19, -10)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.5)*75-50))
+        this.clouds8 = model_transform.times(Mat4.translation(-30, 12, -20)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.7)*75-50));
+        this.clouds9 = model_transform.times(Mat4.translation(-80, 31, -40)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.37)*75-50));
+        this.clouds10 = model_transform.times(Mat4.translation(-25, 22, -30)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.75)*75-50));
+        this.clouds11 = model_transform.times(Mat4.translation(15, 12, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.82)*75-50))
+        this.clouds12 = model_transform.times(Mat4.translation(80, 40, -25)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.27)*75-50))
+        this.clouds13 = model_transform.times(Mat4.translation(-100, 39, -10)).times(Mat4.scale(5, 5, 5)).times(Mat4.translation(0, 0, ((this.t/40)%0.42)*75-50));
+        this.clouds14 = model_transform.times(Mat4.translation(50, 40, -50)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.65)*75-50));
 
         // right mountains
         this.shapes.mountain2.draw(context, program_state, this.rmountain1, this.materials.ice);
@@ -592,6 +595,7 @@ export class main_game extends Scene {
                 this.set_boat.style.color = "cyan";
                 break;
         }
+        context.context.enable(context.context.DEPTH_TEST);
 
         this.shapes.cloud.draw(context, program_state, this.clouds1, this.materials.clouds);
         this.shapes.cloud.draw(context, program_state, this.clouds2, this.materials.clouds);
@@ -607,8 +611,6 @@ export class main_game extends Scene {
         this.shapes.cloud.draw(context, program_state, this.clouds12, this.materials.clouds);
         this.shapes.cloud.draw(context, program_state, this.clouds13, this.materials.clouds);
         this.shapes.cloud.draw(context, program_state, this.clouds14, this.materials.clouds);
-
-        context.context.enable(context.context.DEPTH_TEST);
 
         let points = this.pre_points;
         let highscore = this.pre_highscore;
@@ -626,6 +628,7 @@ export class main_game extends Scene {
        
 
         if (this.alive) { // Only increment points while player is alive
+            this.last_alive = this.t;
             points += 10;
             if (points > highscore) {
                 highscore = points;
@@ -721,29 +724,42 @@ export class main_game extends Scene {
         }
 
         if (!this.alive) {
-            const offsets = Array(this.num_particles).fill(0).map(x=>vec3(0,0.01,0).randomized(.05));
-            this.shapes.base.arrays.offset = this.shapes.base.arrays.offset.map((x, i)=> x.plus(offsets[Math.floor(i/4)]));
-            this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0,0,0)).times(Mat4.scale(1.2,1.2,1.2)), this.materials.particles);
-            this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0,1,0)).times(Mat4.scale(1,1,1)), this.materials.particles);
-            this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0,0.5,0)).times(Mat4.scale(1.4,1.4,1.4)), this.materials.particles);
-            this.shapes.base.copy_onto_graphics_card(context.context, ["offset"], false);
+            if (this.last_alive + 10.75 > this.t) {
+                const offsets = Array(this.num_particles).fill(0).map(x => vec3(0, 0.001, 0).randomized(.07));
+                this.shapes.base.arrays.offset = this.shapes.base.arrays.offset.map((x, i) => x.plus(offsets[Math.floor(i / 4)]));
+                this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0, 0, 0)).times(Mat4.scale(1.2, 1.2, 1.2)), this.materials.particles);
+                this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0, 1, 0)).times(Mat4.scale(1, 1, 1)), this.materials.particles);
+                // this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0,0.5,0)).times(Mat4.scale(1.4,1.4,1.4)), this.materials.particles2);
 
-            const offsets2 = Array(this.num_particles2).fill(0).map(x=>vec3(0,0.01,0).randomized(.05));
-            this.shapes.mid.arrays.offset = this.shapes.mid.arrays.offset.map((x, i)=> x.plus(offsets2[Math.floor(i/4)]));
-            this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(0,0.5,0)), this.materials.particles2);
-            this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(0,1.25,0)), this.materials.particles2);
-            this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(0,2,0)), this.materials.particles2);
-            this.shapes.mid.copy_onto_graphics_card(context.context, ["offset"], false);
+                const offsets2 = Array(this.num_particles2).fill(0).map(x => vec3(0, 0.001, 0).randomized(.07));
+                this.shapes.mid.arrays.offset = this.shapes.mid.arrays.offset.map((x, i) => x.plus(offsets2[Math.floor(i / 4)]));
+                this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(-1.5, 0.5, 0)), this.materials.particles2);
+                if (this.last_alive + 2 < this.t) {
+                    this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0, 0.5, 0)).times(Mat4.scale(1.4, 1.4, 1.4)), this.materials.particles);
+                    this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(-1.5, 1.25, 0)), this.materials.particles2);
+                    this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(-1.5, 2, 0)), this.materials.particles2);
+                }
+                this.shapes.base.copy_onto_graphics_card(context.context, ["offset"], false);
+                this.shapes.mid.copy_onto_graphics_card(context.context, ["offset"], false);
+            }
 
-            const offsets3 = Array(this.num_particles3).fill(0).map(x=>vec3(0,0.02,0).randomized(.05));
-            this.shapes.smoke.arrays.offset = this.shapes.smoke.arrays.offset.map((x, i)=> x.plus(offsets3[Math.floor(i/4)]));
-            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.2,6.3,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(0.2,3.2,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(0.1,5.4,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.2,1,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.1,2.5,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-            this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.3,4.7,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-            this.shapes.smoke.copy_onto_graphics_card(context.context, ["offset"], false);
+            if (this.last_alive + 4 < this.t) {
+                const offsets3 = Array(this.num_particles3).fill(0).map(x => vec3(0, 0.015, 0).randomized(.1));
+                this.shapes.smoke.arrays.offset = this.shapes.smoke.arrays.offset.map((x, i) => x.plus(offsets3[Math.floor(i / 4)]));
+                if (this.last_alive + 11 > this.t) {
+                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.2, 1, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.1, 2.5, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                }
+                if (this.last_alive + 5 < this.t && this.last_alive + 11 > this.t) {
+                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(0.2, 3.2, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(0.1, 5.4, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                }
+                if (this.last_alive + 7 < this.t && this.last_alive + 12.5 > this.t) {
+                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.3, 4.7, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.2, 6.3, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                }
+                this.shapes.smoke.copy_onto_graphics_card(context.context, ["offset"], false);
+            }
 
             // this.shapes.smoke_top.arrays.offset = this.shapes.smoke_top.arrays.offset.map((x, i)=> x.plus(offsets3[Math.floor(i/4)]));
             // this.shapes.smoke_top.draw(context, program_state, this.boat2.times(Mat4.translation(0,2,0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
@@ -837,7 +853,7 @@ const base = defs.base =
             for (let i = 0; i < num_particles; i++) {
                 defs.Square.insert_transformed_copy_into(this, [9], Mat4.identity());
             }
-            const offsets = Array(num_particles).fill(0).map(x=>vec3(0,0,0).randomized(0.2));
+            const offsets = Array(num_particles).fill(0).map(x=>vec3(0,0.1,0).randomized(0.1));
             this.arrays.offset = this.arrays.position.map((x, i)=> offsets[~~(i/4)]);
         }
     };
@@ -853,7 +869,7 @@ const mid = defs.mid =
             for (let i = 0; i < num_particles; i++) {
                 defs.Square.insert_transformed_copy_into(this, [9], Mat4.identity());
             }
-            const offsets = Array(num_particles).fill(0).map(x=>vec3(0,0,0).randomized(2));
+            const offsets = Array(num_particles).fill(0).map(x=>vec3(1.5,1,0).randomized(1));
             this.arrays.offset = this.arrays.position.map((x, i)=> offsets[~~(i/4)]);
         }
     };
@@ -869,7 +885,7 @@ const smoke = defs.smoke =
             for (let i = 0; i < num_particles; i++) {
                 defs.Square.insert_transformed_copy_into(this, [9], Mat4.identity());
             }
-            const offsets = Array(num_particles).fill(0).map(x=>vec3(0,0,0).randomized(5));
+            const offsets = Array(num_particles).fill(0).map(x=>vec3(0.5,3,0).randomized(2));
             this.arrays.offset = this.arrays.position.map((x, i)=> offsets[~~(i/4)]);
         }
     };
@@ -1035,7 +1051,7 @@ const PP_Smoke = defs.PP_Smoke =
                 void main(){                                                                   
                     // The vertex's final resting place (in NDCS):
                     vec3 temp = offset;
-                    temp[1] = mod(temp[1], 6.0);
+                    temp[1] = mod(temp[1], 5.0);
                     gl_Position = projection_camera_model_transform * vec4(position + temp, 1.0 );
                     // The final normal vector in screen space.
                     N = normalize( mat3( model_transform ) * normal / squared_scale);
@@ -1056,9 +1072,6 @@ const PP_Smoke = defs.PP_Smoke =
                 
                 void main(){
                     // Sample the texture image in the correct place:
-                    // vec4 tex_color = vec4(0.0225/(distance(f_tex_coord, vec2(.5,.5))));
-                    // if( tex_color.w < .35 ) discard;
-                    
                     // vec4 tex_color = vec4(0.001/(distance(f_tex_coord, vec2(.5,.5))));
                     // if( tex_color.w > 0.9 ) discard;
                     
