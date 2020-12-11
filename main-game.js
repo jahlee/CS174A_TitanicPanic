@@ -642,7 +642,7 @@ export class main_game extends Scene {
                 this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!", "ASISH WOULD BE PROUD!", "A+ FOR YOU!"];
             }
             var messages2 = this.messages;
-            if (points % 5000 == 0 && points > 100) {
+            if (points % 5000 == 0 && points > 0) {
                 this.timer = this.t;
                 this.cp = true;
                 this.checkpoints++;
