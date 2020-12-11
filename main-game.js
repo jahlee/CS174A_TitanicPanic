@@ -50,7 +50,7 @@ export class main_game extends Scene {
             mountain: new Shape_From_File("./assets/everest.obj"), // alternate texture for mountains
             cloud: new Shape_From_File("./assets/cloud.obj"),
             cube: new Cube(),
-            boat2: new Shape_From_File("./assets/boat2.obj"),
+            boat: new Shape_From_File("./assets/boat2.obj"),
             text: new Text_Line(45),
             base: new base(this.num_particles),
             mid: new mid(this.num_particles2),
@@ -61,7 +61,7 @@ export class main_game extends Scene {
         // *** Materials
         this.materials = {
             ice: new Material(new defs.Phong_Shader(),
-                {ambient: 0.9, diffusivity: 1, specularity: 0.5, color: hex_color("#87ceeb")}),
+                {ambient: 0.9, diffusivity: 2, specularity: 0.5, color: hex_color("#87ceeb")}),
             sky: new Material(new defs.Phong_Shader(),
                 {ambient: 0.9, diffusivity: 1, specularity: 0.5, color: hex_color("#87ceeb")}),
             sun: new Material(new defs.Phong_Shader(),
@@ -134,16 +134,17 @@ export class main_game extends Scene {
             a[i] = vec3(p[0], p[1], 0.25*Math.sin(random(i/a.length))));
 
         // +x is LEFT, + y is INTO THE SCREEN, +z is DOWN
-        let middle = this.boat2.times(r).times(Mat4.translation(-0.5,0,1)).times(Mat4.scale(2,12,1));
+        let middle = this.boat.times(r).times(Mat4.translation(-0.5,0,1)).times(Mat4.scale(2,12,1));
         context.context.disable(context.context.DEPTH_TEST);
         this.shapes.back.draw(context, program_state, middle, this.materials.back_water);
         context.context.enable(context.context.DEPTH_TEST);
 
     }
 
+    // imitate rocking movement of a boat in the ocean
     rock_the_boat() {
-        this.boat2 = this.boat2.times(Mat4.rotation(0.1 - 0.25*Math.abs(Math.sin(this.t)**3),0,0,1));
-        this.boat2 = this.boat2.times(Mat4.rotation(0.1 - 0.25*Math.abs(Math.cos(this.t*0.8)**2),1,0,0));
+        this.boat = this.boat.times(Mat4.rotation(0.1 - 0.25*Math.abs(Math.sin(this.t)**3),0,0,1));
+        this.boat = this.boat.times(Mat4.rotation(0.1 - 0.25*Math.abs(Math.cos(this.t*0.8)**2),1,0,0));
     }
 
     check_key_pressed(c) {
@@ -209,25 +210,25 @@ export class main_game extends Scene {
     }
 
     turn_boat() {
-        this.boat2 = Mat4.identity().times(Mat4.scale(1,1,-1))
+        this.boat = Mat4.identity().times(Mat4.scale(1,1,-1))
             .times(Mat4.translation(this.pre_position, this.pre_position_y,2));
         if (this.alive) { // ONLY LET USER DO KEY CONTROLS IF THE PLAYER IS STILL ALIVE
             let degree = -this.vel/0.25;
             if (this.RIGHT) {
                 this.vel += 0.01;
-                this.boat2 = this.boat2.times(Mat4.rotation(degree * Math.PI/8, 0, -1, 1));
+                this.boat = this.boat.times(Mat4.rotation(degree * Math.PI/8, 0, -1, 1));
             }
             else if (this.LEFT) {
                 this.vel -= 0.01;
-                this.boat2 = this.boat2.times(Mat4.rotation(degree * Math.PI/8, 0, -1, 1));
+                this.boat = this.boat.times(Mat4.rotation(degree * Math.PI/8, 0, -1, 1));
             }
             else if (this.stopL) {
                 this.vel = Math.min(this.vel + 0.015, 0);
-                this.boat2 = this.boat2.times(Mat4.rotation(degree * Math.PI/10, 0, -1, 1));
+                this.boat = this.boat.times(Mat4.rotation(degree * Math.PI/10, 0, -1, 1));
             }
             else if (this.stopR) {
                 this.vel = Math.max(this.vel - 0.015, 0);
-                this.boat2 = this.boat2.times(Mat4.rotation(degree * Math.PI/10, 0, -1, 1));
+                this.boat = this.boat.times(Mat4.rotation(degree * Math.PI/10, 0, -1, 1));
             }
 
             this.pre_position += this.vel;
@@ -449,55 +450,11 @@ export class main_game extends Scene {
         this.turn_boat();
 
         this.display_water(context, program_state);
-        const p = this.t + 2;
-        const q = p + 2;
-        const r = q + 2;
-        const s = r + 2;
-        const u = s + 2;
-        const v = u + 2;
-        const w = v + 2;
+        const s = this.t + 8;
         
         if (this.alive) { // only move the mountains while the player is still alive
-
-            this.rmountain1 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0)));//.times(Mat4.scale(1, 1, 8)));
-            this.rmountain2 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (s%16.0))));//.times(Mat4.scale(1, 1, 8)));
-            this.rmountain3 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0))));
-            this.rmountain4 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0))));
-            this.rmountain5 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (s%16.0))));
-            this.rmountain6 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (u%16.0))));
-            this.rmountain7 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (v%16.0))));
-            this.rmountain8 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (w%16.0))));
-
-
-            this.lmountain1 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0)));//.times(Mat4.scale(1, 1, 8));
-            this.lmountain2 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (s%16.0))));//.times(Mat4.scale(1, 1, 8));
-            this.lmountain3 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (q%16.0))));
-            this.lmountain4 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (r%16.0))));
-            this.lmountain5 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (s%16.0))));
-            this.lmountain6 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (u%16.0))));
-            this.lmountain7 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (v%16.0))));
-            this.lmountain8 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (w%16.0))));
-
-
-
-            this.clouds1 = model_transform.times(Mat4.translation(0, 20, -60)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.85)*75-50));
-            this.clouds2 = model_transform.times(Mat4.translation(-50, 15, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.5)*75-50));
-            this.clouds3 = model_transform.times(Mat4.translation(-80, 15, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.15)*75-50));
-            this.clouds4 = model_transform.times(Mat4.translation(30, 14, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.4)*75-50));
-            this.clouds5 = model_transform.times(Mat4.translation(-20, 20, 0)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.58)*75-50));
-            this.clouds6 = model_transform.times(Mat4.translation(20, 10, -55)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.91)*75-50))
-            this.clouds7 = model_transform.times(Mat4.translation(44, 19, -10)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.5)*75-50))
-            this.clouds8 = model_transform.times(Mat4.translation(-30, 12, -20)).times(Mat4.scale(3, 3, 3)).times(Mat4.translation(0, 0, ((this.t/40)%0.7)*75-50));
-            this.clouds9 = model_transform.times(Mat4.translation(-80, 31, -40)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.37)*75-50));
-            this.clouds10 = model_transform.times(Mat4.translation(-25, 22, -30)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.75)*75-50));
-            this.clouds11 = model_transform.times(Mat4.translation(15, 12, -20)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.82)*75-50))
-            this.clouds12 = model_transform.times(Mat4.translation(80, 40, -25)).times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 0, ((this.t/40)%0.27)*75-50))
-            this.clouds13 = model_transform.times(Mat4.translation(-100, 39, -10)).times(Mat4.scale(5, 5, 5)).times(Mat4.translation(0, 0, ((this.t/40)%0.42)*75-50));
-            this.clouds14 = model_transform.times(Mat4.translation(50, 40, -50)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.65)*75-50));
-
             this.rmountain1 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0)).times(Mat4.scale(1, 1, 8)));
             this.rmountain2 = model_transform.times(Mat4.scale(3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (s%16.0))).times(Mat4.scale(1, 1, 8)));
-
 
             this.lmountain1 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - this.t%16.0))).times(Mat4.scale(1, 1, 8));
             this.lmountain2 = model_transform.times(Mat4.scale(-3,10,10)).times(Mat4.translation(13, 0.23, -1 * (16 - (s%16.0)))).times(Mat4.scale(1, 1, 8));
@@ -519,11 +476,11 @@ export class main_game extends Scene {
         this.clouds14 = model_transform.times(Mat4.translation(50, 40, -50)).times(Mat4.scale(4, 4, 4)).times(Mat4.translation(0, 0, ((this.t/40)%0.65)*75-50));
 
         // right mountains
-        this.shapes.mountain2.draw(context, program_state, this.rmountain1, this.materials.ice);
-        this.shapes.mountain2.draw(context, program_state, this.rmountain2, this.materials.ice);
+        this.shapes.mountain2.draw(context, program_state, this.rmountain1, this.materials.ice.override({diffusivity: 1, specularity: 1}));
+        this.shapes.mountain2.draw(context, program_state, this.rmountain2, this.materials.ice.override({diffusivity: 1, specularity: 1}));
         // left mountains
-        this.shapes.mountain2.draw(context, program_state, this.lmountain1, this.materials.ice);
-        this.shapes.mountain2.draw(context, program_state, this.lmountain2, this.materials.ice);
+        this.shapes.mountain2.draw(context, program_state, this.lmountain1, this.materials.ice.override({diffusivity: 1, specularity: 1}));
+        this.shapes.mountain2.draw(context, program_state, this.lmountain2, this.materials.ice.override({diffusivity: 1, specularity: 1}));
 
         if (this.alive)
             this.rock_the_boat();
@@ -531,17 +488,17 @@ export class main_game extends Scene {
         // let user change the texture of the boat
         switch (this.boat_texture % 3) {
             case 0:
-                this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fa);
+                this.shapes.boat.draw(context, program_state, this.boat, this.materials.boat2_fa);
                 this.set_boat.textContent = "Boat: Original";
                 this.set_boat.style.color = "red";
                 break;
             case 1:
-                this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fm);
+                this.shapes.boat.draw(context, program_state, this.boat, this.materials.boat2_fm);
                 this.set_boat.textContent = "Boat: Ghost";
                 this.set_boat.style.color = "gray";
                 break;
             case 2:
-                this.shapes.boat2.draw(context, program_state, this.boat2, this.materials.boat2_fm.override({color: color(Math.random(), Math.random(), Math.random(), 1)}));
+                this.shapes.boat.draw(context, program_state, this.boat, this.materials.boat2_fm.override({color: color(Math.random(), Math.random(), Math.random(), 1)}));
                 this.set_boat.textContent = "Boat: Disco";
                 this.set_boat.style.color = "cyan";
                 break;
@@ -591,7 +548,8 @@ export class main_game extends Scene {
 
             // messages will get smaller as once a message is used, it will be popped, once all the messages are used, messages will reset
             if (this.messages.length == 0) {
-                this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!", "FANTASTIC STEERING!", "THUMBS UP!", "ASISH WOULD BE PROUD!", "A+ FOR YOU!"];
+                this.messages = ["YOU'RE DOING GREAT!", "MIGHTY FINE WORK!", "KEEP IT UP!", "AMAZING BOATMANSHIP!", "YOU'RE A PRO AT THIS!", "TERRIFIC WORK!", "SENSATIONAL!",
+                    "FANTASTIC STEERING!", "THUMBS UP!", "ASISH WOULD BE PROUD!", "A+ FOR YOU!", "E=MC^2!", "AWESOME!", "CASH MONEY!", "TOO EASY!"];
             }
             var messages2 = this.messages;
             if (points % 5000 == 0 && points > 0) {
@@ -616,18 +574,18 @@ export class main_game extends Scene {
             }
 
         } else { // Game over screen upon losing
+            context.context.disable(context.context.DEPTH_TEST);
             this.shapes.text.set_string("GAME", context.context);
-            //context.context.disable(context.context.DEPTH_TEST);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 7, -5 * Math.sin(this.t*5)/10+2)), this.materials.text_image);
             this.shapes.text.set_string("OVER", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-2.5, 5, -5 * Math.sin(this.t*5)/10+2)), this.materials.text_image);
             this.shapes.text.set_string("Press P to try again", context.context);
             this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-4.5, 3, -5 * Math.sin(this.t*5)/10+2)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
-            //context.context.enable(context.context.DEPTH_TEST);
             if (this.new_highscore) {
                 this.shapes.text.set_string("*NEW HIGHSCORE!*", context.context);
                 this.shapes.text.draw(context, program_state, model_transform.times(Mat4.translation(-3.5, 2, -5 * Math.sin(this.t*5)/10+2)).times(Mat4.scale(0.3, 0.3, 0.3)), this.materials.text_image);
             }
+            context.context.enable(context.context.DEPTH_TEST);
         }
 
         this.pre_points = points;
@@ -641,7 +599,7 @@ export class main_game extends Scene {
         if (points%50 == 0 && this.a >= 2)
         {
              this.a = this.a/1.001;
-        }       
+        }
 
         // beginning game dialogue
         if (this.t < 5 && this.firstRound) {
@@ -679,16 +637,16 @@ export class main_game extends Scene {
             if (this.last_alive + 10.75 > this.t) {
                 const offsets = Array(this.num_particles).fill(0).map(x => vec3(0, 0.001, 0).randomized(.07));
                 this.shapes.base.arrays.offset = this.shapes.base.arrays.offset.map((x, i) => x.plus(offsets[Math.floor(i / 4)]));
-                this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0, 0, 0)).times(Mat4.scale(1.2, 1.2, 1.2)), this.materials.particles);
-                this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0, 1, 0)).times(Mat4.scale(1, 1, 1)), this.materials.particles);
+                this.shapes.base.draw(context, program_state, this.boat.times(Mat4.translation(0, 0, 0)).times(Mat4.scale(1.2, 1.2, 1.2)), this.materials.particles);
+                this.shapes.base.draw(context, program_state, this.boat.times(Mat4.translation(0, 1, 0)).times(Mat4.scale(1, 1, 1)), this.materials.particles);
 
                 const offsets2 = Array(this.num_particles2).fill(0).map(x => vec3(0, 0.001, 0).randomized(.07));
                 this.shapes.mid.arrays.offset = this.shapes.mid.arrays.offset.map((x, i) => x.plus(offsets2[Math.floor(i / 4)]));
-                this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(-1.5, 0.5, 0)), this.materials.particles2);
+                this.shapes.mid.draw(context, program_state, this.boat.times(Mat4.translation(-1.5, 0.5, 0)), this.materials.particles2);
                 if (this.last_alive + 2 < this.t) {
-                    this.shapes.base.draw(context, program_state, this.boat2.times(Mat4.translation(0, 0.5, 0)).times(Mat4.scale(1.4, 1.4, 1.4)), this.materials.particles);
-                    this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(-1.5, 1.25, 0)), this.materials.particles2);
-                    this.shapes.mid.draw(context, program_state, this.boat2.times(Mat4.translation(-1.5, 2, 0)), this.materials.particles2);
+                    this.shapes.base.draw(context, program_state, this.boat.times(Mat4.translation(0, 0.5, 0)).times(Mat4.scale(1.4, 1.4, 1.4)), this.materials.particles);
+                    this.shapes.mid.draw(context, program_state, this.boat.times(Mat4.translation(-1.5, 1.25, 0)), this.materials.particles2);
+                    this.shapes.mid.draw(context, program_state, this.boat.times(Mat4.translation(-1.5, 2, 0)), this.materials.particles2);
                 }
                 this.shapes.base.copy_onto_graphics_card(context.context, ["offset"], false);
                 this.shapes.mid.copy_onto_graphics_card(context.context, ["offset"], false);
@@ -698,16 +656,16 @@ export class main_game extends Scene {
                 const offsets3 = Array(this.num_particles3).fill(0).map(x => vec3(0, 0.015, 0).randomized(.1));
                 this.shapes.smoke.arrays.offset = this.shapes.smoke.arrays.offset.map((x, i) => x.plus(offsets3[Math.floor(i / 4)]));
                 if (this.last_alive + 11 > this.t) {
-                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.2, 1, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.1, 2.5, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                    this.shapes.smoke.draw(context, program_state, this.boat.times(Mat4.translation(-0.2, 1, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                    this.shapes.smoke.draw(context, program_state, this.boat.times(Mat4.translation(-0.1, 2.5, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
                 }
                 if (this.last_alive + 5 < this.t && this.last_alive + 11 > this.t) {
-                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(0.2, 3.2, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(0.1, 5.4, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                    this.shapes.smoke.draw(context, program_state, this.boat.times(Mat4.translation(0.2, 3.2, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                    this.shapes.smoke.draw(context, program_state, this.boat.times(Mat4.translation(0.1, 5.4, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
                 }
                 if (this.last_alive + 7 < this.t && this.last_alive + 12.5 > this.t) {
-                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.3, 4.7, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
-                    this.shapes.smoke.draw(context, program_state, this.boat2.times(Mat4.translation(-0.2, 6.3, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                    this.shapes.smoke.draw(context, program_state, this.boat.times(Mat4.translation(-0.3, 4.7, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
+                    this.shapes.smoke.draw(context, program_state, this.boat.times(Mat4.translation(-0.2, 6.3, 0)), this.materials.particles3);     //color(0.58, 0.57, 0.58, 0.2)}));
                 }
                 this.shapes.smoke.copy_onto_graphics_card(context.context, ["offset"], false);
             }
@@ -721,7 +679,7 @@ export class main_game extends Scene {
             program_state.animation_time = 0;
             //put boat at center
             this.pre_position = 0;
-            this.pre_position_y = 1.5;
+            this.pre_position_y = 1.75;
             this.alive = true;
             //reset boat movement
             this.RIGHT = false;
