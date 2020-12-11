@@ -36,7 +36,7 @@ export class main_game extends Scene {
 
         //AUDIO TEST
 
-        this.music = new Audio("assets/bgmusic.mp3");
+        this.music = new Audio("assets/bgmusic3.mp3");
         this.music.loop = true;
         this.music.volume = 0.2;
 
