@@ -17,7 +17,7 @@ Using the  ←  and  →  keys, you can steer the boat from left to right and av
 - [Shift+W] Change Environment (day + night, day only, sunset only, night only)<br />
 
 <ins>Advanced Features:</ins>
-- <b>Collision detection</b> between boat and icebergs
-- <b>Bump mapping</b> on boat
-- <b>Physics</b> concepts on boat and water movement
+- <b>Collision detection</b> between the boat and icebergs
+- <b>Bump mapping</b> on the boat
+- <b>Physics</b> concepts on the boat and water movement
 - <b>Particle effects</b> for the fire
