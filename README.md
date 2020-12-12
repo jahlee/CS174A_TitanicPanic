@@ -1,6 +1,6 @@
 # Titanic Panic!
 
-A CS 174A tiny-graphics project. 
+A CS 174A tiny-graphics project. <br />
 Made by Ben, Estee, Josh, and Stephanie.
 
 It’s 1912. Your time machine was successful and you’ve transported on to the Titanic’s maiden voyage, minutes before the infamous crash. Knowing Titanic’s fate, can you change the course of history and steer her to safety?
