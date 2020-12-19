@@ -21,3 +21,10 @@ Using the  ←  and  →  keys, you can steer the boat from left to right and av
 - <b>Bump mapping</b> on the boat
 - <b>Physics</b> concepts on the boat and water movement
 - <b>Particle effects</b> for the fire
+
+<ins>How to run the game:</ins>
+1. Download all the files
+2a. If on Mac: open host.command
+2b. If on Windows: open host.bat
+3. Assuming the port says 8000, navigate Chrome (or browser of your choice) to the url http://localhost:8000/
+4. Have fun!
