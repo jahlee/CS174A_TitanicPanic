@@ -1,11 +1,12 @@
 # Titanic Panic!
 
 A CS 174A tiny-graphics project. <br />
+Taken F20 with Professor Law. <br />
 Made by Ben, Estee, Josh, and Stephanie.
 
-It’s 1912. Your time machine was successful and you’ve transported on to the Titanic’s maiden voyage, minutes before the infamous crash. Knowing Titanic’s fate, can you change the course of history and steer her to safety?
+_It’s 1912. Your time machine was successful and you’ve transported on to the Titanic’s maiden voyage, minutes before the infamous crash. Knowing Titanic’s fate, can you change the course of history and steer her to safety?_
 
-Using the  ←  and  →  keys, you can steer the boat from left to right and avoid oncoming iceberg obstacles. The deeper you go, the more difficult the icebergs become to avoid.
+_Using the  ←  and  →  keys, you can steer the boat from left to right and avoid oncoming iceberg obstacles. The deeper you go, the more difficult the icebergs become to avoid._
 
 <ins>Button Controls:</ins> <br />
 - [p] Reset Game<br />
@@ -22,9 +23,10 @@ Using the  ←  and  →  keys, you can steer the boat from left to right and av
 - <b>Physics</b> concepts on the boat and water movement
 - <b>Particle effects</b> for the fire
 
-<ins>How to run the game:</ins>
-1. Download all the files
-2a. If on Mac: open host.command
-2b. If on Windows: open host.bat
-3. Assuming the port says 8000, navigate Chrome (or browser of your choice) to the url http://localhost:8000/
-4. Have fun!
+<ins>How to play the game:</ins>
+1) Download all the files
+2) Load the server
+   - If on Mac: open _host.command_
+   - If on Windows: open _host.bat_
+3) Assuming the port says _8000_, navigate Chrome (or browser of your choice) to the url http://localhost:8000/
+4) Have fun!
