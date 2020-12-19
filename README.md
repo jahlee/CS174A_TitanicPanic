@@ -25,7 +25,7 @@ _Using the  ←  and  →  keys, you can steer the boat from left to right and a
 
 <ins>How to play the game:</ins>
 1) Download all the files
-2) Load the server
+2) Run the 'server'
    - If on Mac: open _host.command_
    - If on Windows: open _host.bat_
 3) Assuming the port says _8000_, navigate Chrome (or browser of your choice) to the url http://localhost:8000/
